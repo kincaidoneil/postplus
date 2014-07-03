@@ -1,0 +1,190 @@
+body, html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden; }
+
+#headerPane {
+  width: 100%;
+  height: 60px;
+  position: fixed;
+  background: white; }
+  #headerPane h1 {
+    width: 300px;
+    margin: auto;
+    text-align: center;
+    line-height: 60px;
+    font-family: "Montserrat";
+    font-weight: normal;
+    font-size: 24pt;
+    color: gray;
+    -webkit-text-stroke: 1px gray; }
+  #headerPane #settingsButton {
+    margin: 6px;
+    position: absolute;
+    top: 0;
+    right: 0; }
+
+#columnPane {
+  min-width: 100%;
+  height: calc(100% - 60px);
+  position: absolute;
+  top: 60px;
+  left: 0;
+  background: lightgray; }
+
+.columnContainer {
+  height: 100%;
+  float: left;
+  overflow-y: scroll;
+  overflow-x: hidden; }
+  .columnContainer .columnTop {
+    width: 100%;
+    min-height: 40px;
+    position: absolute;
+    z-index: 10;
+    background: lightgray; }
+    .columnContainer .columnTop .columnLabel {
+      width: calc(100% - 80px);
+      padding: 0 10px;
+      float: left; }
+      .columnContainer .columnTop .columnLabel * {
+        font-family: "Montserrat";
+        font-weight: normal;
+        font-size: 14pt;
+        color: gray;
+        text-transform: uppercase;
+        line-height: 40px;
+        -webkit-text-stroke: 0.5px gray; }
+      .columnContainer .columnTop .columnLabel input {
+        margin: 0;
+        padding: 0;
+        border: none;
+        outline: none;
+        background: transparent; }
+    .columnContainer .columnTop .editButton {
+      width: 40px;
+      height: 40px;
+      float: right;
+      cursor: move; }
+  .columnContainer .column {
+    width: 100%;
+    height: calc(100% - 40px);
+    margin-top: 40px; }
+
+.card {
+  width: calc(100% - 20px);
+  margin-bottom: 10px;
+  padding: 10px;
+  float: left;
+  background: white;
+  font-family: "Segoe UI";
+  font-size: 11pt;
+  color: dimgray; }
+
+.smTopPane {
+  width: 100%;
+  float: left; }
+
+.smStatusPic {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  float: left;
+  opacity: 0; }
+
+.smDetails {
+  width: calc(100% - 60px);
+  margin-top: 3px;
+  float: left; }
+
+.smName {
+  margin-right: 4px;
+  float: left;
+  font-family: "Segoe UI";
+  font-weight: bold; }
+
+.smUsername, .smTimestamp {
+  margin-top: 2px;
+  float: left;
+  font-family: "Segoe UI Light";
+  font-size: 10pt;
+  color: gray; }
+
+.smTimestamp {
+  float: right; }
+
+.smPostStats {
+  margin-top: 5px;
+  margin-right: 5px;
+  float: left;
+  font-family: "Segoe UI";
+  font-size: 10pt;
+  color: gray;
+  line-height: 12px; }
+
+.smIcon {
+  margin-right: 4px;
+  float: left; }
+
+.smBottomPane {
+  width: 100%;
+  float: left; }
+
+.smFbPost {
+  width: 100%;
+  margin-top: 5px;
+  float: left;
+  font-family: "Segoe UI Semilight";
+  font-size: 10.5pt; }
+
+.smFbPost a {
+  color: #2A93DB;
+  cursor: pointer;
+  text-decoration: none; }
+
+.smFbPost a:hover {
+  text-decoration: underline; }
+
+.smFbPic {
+  max-width: 100%;
+  max-height: 350px;
+  margin-top: 5px;
+  float: left; }
+
+.smFbVideo {
+  width: 100%;
+  max-height: 300px;
+  margin-top: 5px;
+  float: left; }
+
+.smInstagramPic {
+  width: 100%;
+  height: 100%;
+  margin-top: 5px;
+  float: left; }
+
+.smInstagramCaption {
+  width: 100%;
+  margin-top: 5px;
+  float: left;
+  font-family: "Segoe UI Semilight";
+  font-size: 10.5pt; }
+
+.smTweet {
+  width: 100%;
+  margin-top: 5px;
+  float: left;
+  font-family: "Segoe UI Semilight";
+  font-size: 10.5pt; }
+
+#detailsPane {
+  display: none; }
+
+#infoPane {
+  width: 66.66%; }
+
+#commentsPane {
+  width: 33.33%; }

@@ -1,0 +1,212 @@
+/* DOCUMENT */
+body, html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0; }
+
+/* FONTS */
+/* Roboto */
+@font-face {
+  font-family: "Roboto Thin";
+  font-weight: normal;
+  font-style: normal;
+  src: url('../../fonts/Roboto/Roboto-Thin.ttf'); }
+
+@font-face {
+  font-family: "Roboto Thin";
+  font-weight: normal;
+  font-style: italic;
+  src: url('../../fonts/Roboto/Roboto-ThinItalic.ttf'); }
+
+@font-face {
+  font-family: "Roboto Light";
+  font-weight: normal;
+  font-style: normal;
+  src: url('../../fonts/Roboto/Roboto-Light.ttf'); }
+
+@font-face {
+  font-family: "Roboto Light";
+  font-weight: normal;
+  font-style: italic;
+  src: url('../../fonts/Roboto/Roboto-Medium.ttf'); }
+
+@font-face {
+  font-family: "Roboto";
+  font-weight: normal;
+  font-style: normal;
+  src: url('../../fonts/Roboto/Roboto-Regular.ttf'); }
+
+@font-face {
+  font-family: "Roboto";
+  font-weight: normal;
+  font-style: italic;
+  src: url('../../fonts/Roboto/Roboto-Italic.ttf'); }
+
+@font-face {
+  font-family: "Roboto";
+  font-weight: bold;
+  font-style: normal;
+  src: url('../../fonts/Roboto/Roboto-Medium.ttf'); }
+
+@font-face {
+  font-family: "Roboto";
+  font-weight: bold;
+  font-style: italic;
+  src: url('../../fonts/Roboto/Roboto-MediumItalic.ttf'); }
+
+@font-face {
+  font-family: "Roboto Bold";
+  font-weight: normal;
+  font-style: normal;
+  src: url('../../fonts/Roboto/Roboto-Bold.ttf'); }
+
+@font-face {
+  font-family: "Roboto Bold";
+  font-weight: normal;
+  font-style: italic;
+  src: url('../../fonts/Roboto/Roboto-BoldItalic.ttf'); }
+
+@font-face {
+  font-family: "Roboto Black";
+  font-weight: normal;
+  font-style: normal;
+  src: url('../../fonts/Roboto/Roboto-Black.ttf'); }
+
+@font-face {
+  font-family: "Roboto Black";
+  font-weight: normal;
+  font-style: italic;
+  src: url('../../fonts/Roboto/Roboto-BlackItalic.ttf'); }
+
+/* Montserrat */
+@font-face {
+  font-family: "Montserrat";
+  font-weight: normal;
+  font-style: normal;
+  src: url('../../fonts/Montserrat/Montserrat-Regular.ttf'); }
+
+@font-face {
+  font-family: "Montserrat";
+  font-weight: bold;
+  font-style: normal;
+  src: url('../../fonts/Montserrat/Montserrat-Bold.ttf'); }
+
+/* WeblySleek UI */
+@font-face {
+  font-family: "WeblySleek UI Light";
+  font-weight: normal;
+  font-style: normal;
+  src: url('../../fonts/WeblySleek UI/weblysleekuil.ttf'); }
+
+@font-face {
+  font-family: "WeblySleek UI Light";
+  font-weight: normal;
+  font-style: italic;
+  src: url('../../fonts/WeblySleek UI/weblysleekuili.ttf'); }
+
+@font-face {
+  font-family: "WeblySleek UI";
+  font-weight: normal;
+  font-style: normal;
+  src: url('../../fonts/WeblySleek UI/weblysleekuisl.ttf'); }
+
+@font-face {
+  font-family: "WeblySleek UI";
+  font-weight: normal;
+  font-style: italic;
+  src: url('../../fonts/WeblySleek UI/weblysleekuisli.ttf'); }
+
+@font-face {
+  font-family: "WeblySleek UI";
+  font-weight: bold;
+  font-style: normal;
+  src: url('../../fonts/WeblySleek UI/weblysleekuisb.ttf'); }
+
+@font-face {
+  font-family: "WeblySleek UI";
+  font-weight: bold;
+  font-style: italic;
+  src: url('../../fonts/WeblySleek UI/weblysleekuisbi.ttf'); }
+
+/* ANIMATIONS */
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg); }
+
+  100% {
+    -webkit-transform: rotate(359deg); } }
+
+/* OBJECTS */
+div {
+  box-sizing: border-box; }
+
+.button {
+  text-align: center;
+  background: darkgray;
+  color: white;
+  font-family: "Montserrat";
+  text-transform: uppercase;
+  font-size: 11pt;
+  cursor: pointer;
+  /* ONLY TEMPORARY UNTIL CHROME FIXES ITS TERRIBLE ANTI-ALIASING */
+  -webkit-font-smoothing: subpixel-antialiased;
+  -webkit-text-stroke: 0.5px;
+  letter-spacing: 1px; }
+
+.loading {
+  width: 80px;
+  height: 80px;
+  border-top: 6px solid white;
+  border-right: 6px solid #00ACED;
+  border-bottom: 6px solid #3B5998;
+  border-left: 6px solid #3F729B;
+  background: transparent;
+  border-radius: 50%;
+  box-sizing: border-box;
+  -webkit-animation: spin 1s infinite linear; }
+
+/* ALERT LAYER */
+#alertContainer {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  z-index: 100; }
+
+#alertLayer {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  z-index: 300; }
+
+#alertBox {
+  width: 400px;
+  height: 200px;
+  padding: 20px;
+  box-sizing: border-box;
+  position: absolute;
+  background: white;
+  font-family: "WeblySleek UI Light";
+  font-size: 14pt;
+  color: gray; }
+
+#alertButton {
+  width: 100px;
+  height: 40px;
+  line-height: 40px;
+  position: absolute;
+  right: 20px;
+  bottom: 20px; }
+
+#alertBackground {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.4); }
