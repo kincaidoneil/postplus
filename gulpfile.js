@@ -141,7 +141,7 @@ gulp.task('update', function() {
 	});
 	// Watch HTML for changes (index.html or web components).
 	gulp.watch('src/**/*.html', function(event) {
-		gulp.src(event.path)
+		gulp.src('src/index.html')
 			.pipe(connect.reload());
 	});
 });
