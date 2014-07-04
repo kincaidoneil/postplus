@@ -92,43 +92,6 @@ body, html {
   font-style: normal;
   src: url('../../fonts/Montserrat/Montserrat-Bold.ttf'); }
 
-/* WeblySleek UI */
-@font-face {
-  font-family: "WeblySleek UI Light";
-  font-weight: normal;
-  font-style: normal;
-  src: url('../../fonts/WeblySleek UI/weblysleekuil.ttf'); }
-
-@font-face {
-  font-family: "WeblySleek UI Light";
-  font-weight: normal;
-  font-style: italic;
-  src: url('../../fonts/WeblySleek UI/weblysleekuili.ttf'); }
-
-@font-face {
-  font-family: "WeblySleek UI";
-  font-weight: normal;
-  font-style: normal;
-  src: url('../../fonts/WeblySleek UI/weblysleekuisl.ttf'); }
-
-@font-face {
-  font-family: "WeblySleek UI";
-  font-weight: normal;
-  font-style: italic;
-  src: url('../../fonts/WeblySleek UI/weblysleekuisli.ttf'); }
-
-@font-face {
-  font-family: "WeblySleek UI";
-  font-weight: bold;
-  font-style: normal;
-  src: url('../../fonts/WeblySleek UI/weblysleekuisb.ttf'); }
-
-@font-face {
-  font-family: "WeblySleek UI";
-  font-weight: bold;
-  font-style: italic;
-  src: url('../../fonts/WeblySleek UI/weblysleekuisbi.ttf'); }
-
 /* ANIMATIONS */
 @-webkit-keyframes spin {
   0% {
