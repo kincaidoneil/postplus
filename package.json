@@ -20,7 +20,6 @@
     "connect-livereload": "0.3.2",
     "tiny-lr": "0.0.5",
     "gulp-html-replace": "^1.1.0",
-    "gulp-ember-handlebars": "^0.6.0",
     "gulp-vulcanize": "^0.2.0",
     "gulp-rimraf": "^0.1.0",
     "run-sequence": "^0.3.6"

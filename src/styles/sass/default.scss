@@ -1,4 +1,4 @@
-/* DOCUMENT */
+// DOCUMENT
 
 body, html {
 	width: 100%;
@@ -7,9 +7,47 @@ body, html {
 	padding: 0;
 }
 
-/* FONTS */
+// COLUMNS
 
-/* Roboto */
+#headerPane {
+	
+	width: 100%;
+	height: 60px;
+	position: fixed;
+	background: white;
+
+	h1 {
+		width: 300px;
+		margin: auto;
+		text-align: center;
+		line-height: 60px;
+		font-family: "Montserrat";
+		font-weight: bold;
+		font-size: 24pt;
+		color: gray;
+	}
+	
+	#settingsButton {
+		margin: 6px;
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+		
+}
+
+#columnPane {
+	min-width: 100%;
+	height: calc(100% - 60px);
+	position: absolute;
+	top: 60px;
+	left: 0;
+	background: lightgray;
+}
+
+// FONTS
+
+// Roboto
 
 @font-face {
 	font-family: "Roboto Thin";
@@ -95,7 +133,7 @@ body, html {
 	src: url('../../fonts/Roboto/Roboto-BlackItalic.ttf');
 }
 
-/* Roboto Condensed */
+// Roboto Condensed
 
 @font-face {
 	font-family: "Roboto Condensed";
@@ -139,7 +177,7 @@ body, html {
 	src: url('../../fonts/Roboto/RobotoCondensed-LightItalic.ttf');
 }
 
-/* Montserrat */
+// Montserrat
 
 @font-face {
 	font-family: "Montserrat";

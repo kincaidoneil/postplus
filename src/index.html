@@ -6,31 +6,29 @@
 		<!-- CSS -->
 			<!-- build:css -->
 			<link rel="stylesheet" href="styles/css/default.css" />
-			<link rel="stylesheet" href="styles/css/login.css" />
-			<link rel="stylesheet" href="styles/css/columns.css" />
 			<!-- endbuild -->
 		<!-- LIBRARIES -->
-			<script src="lib/jquery/jquery.min.js"></script>
-			<script src="lib/handlebars/handlebars.runtime.min.js"></script>
-			<script src="lib/ember/ember.min.js"></script>
-			<script src="lib/ember-data/ember-data.min.js"></script>
+			<script src="lib/jquery/dist/jquery.min.js"></script>
 			<script src="lib/platform/platform.js"></script>
 		<!-- HTML IMPORTS -->
 			<link rel="import" href="lib/paper-elements/paper-elements.html">
-		<!-- TEMPLATES -->
-			<script src="templates/templates.js"></script>
+			<link rel="import" href="lib/core-icons/core-icons.html">
+			<link rel="import" href="components/people-img.html">
+			<link rel="import" href="components/people-card.html">
+			<link rel="import" href="components/people-column.html">
 		<!-- JAVASCRIPT -->
 			<!-- build:js -->
 			<script src="scripts/app.js"></script>
 			<script src="scripts/columns.js"></script>
 			<!-- endbuild -->
-		<!-- FONTS -->
-			<font-roboto></font-roboto>
 	</head>
 	<body>
-		
-		<paper-button label="Hello!" raisedButton="true"></paper-button>
-		<paper-icon-button icon="refresh" style="fill: #3B5998;" role="button"></paper-icon-button>
-		
+		<div id="headerPane">
+			<h1>PEOPLE+</h1>
+			<img id="settingsButton" src="images/settings.png" />
+		</div>
+		<div id="columnPane">
+			<people-column></people-column>
+		</div>
 	</body>
 </html>

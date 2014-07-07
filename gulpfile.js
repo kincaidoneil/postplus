@@ -10,7 +10,6 @@ var concatCSS = require('gulp-concat-css');
 var vulcanize = require('gulp-vulcanize');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-var handlebars = require('gulp-ember-handlebars');
 var connect = require('gulp-connect');
 var clean = require('gulp-rimraf');
 var runSeq = require('run-sequence');
@@ -46,21 +45,6 @@ gulp.task('scripts', function() {
 			}
 		}))
 		.pipe(gulp.dest('build/scripts'));
-});
-
-gulp.task('templates', function() {
-	return gulp.src('src/templates/**/*.hbs')
-		.pipe(handlebars({ // Compile Handlebars templates into JS.
-			outputType: 'browser'
-		}))
-		.pipe(concat('templates.js')) // Concat the JS files into one.
-		.pipe(gulp.dest('src/templates'))
-		.pipe(uglify({ // Minify it, remove comments, etc.
-			compress: {
-				drop_console: true
-			}
-		}))
-		.pipe(gulp.dest('build/templates'));
 });
 
 gulp.task('html', function() {
@@ -120,16 +104,6 @@ gulp.task('update', function() {
 			.pipe(gulp.dest('src/styles/css'))
 			.pipe(connect.reload());
 	});
-	// Watch Handlebars for changes.
-	gulp.watch('src/templates/**/*.hbs', function(event) {
-		return gulp.src(event.path)
-			.pipe(handlebars({
-				outputType: 'browser'
-			}))
-			.pipe(concat('templates.js'))
-			.pipe(gulp.dest('src/templates'))
-			.pipe(connect.reload());
-	});
 	// Watch JavaScript for changes.
 	gulp.watch('src/scripts/**/*.js', function(event) {
 		return gulp.src(event.path)
@@ -154,8 +128,6 @@ gulp.task('build', function() {
 		'styles',
 		// Concat, minify and copy JavaScript files.
 		'scripts',
-		// Compile and copy handlebars templates.
-		'templates',
 		// Replace HTML; concat Polymer components; copy.
 		'html',
 		// Copy other miscellaneous assets.
