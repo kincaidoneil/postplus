@@ -79,6 +79,43 @@ body, html {
   font-style: italic;
   src: url('../../fonts/Roboto/Roboto-BlackItalic.ttf'); }
 
+/* Roboto Condensed */
+@font-face {
+  font-family: "Roboto Condensed";
+  font-weight: normal;
+  font-style: normal;
+  src: url('../../fonts/Roboto/RobotoCondensed-Regular.ttf'); }
+
+@font-face {
+  font-family: "Roboto Condensed";
+  font-weight: normal;
+  font-style: italic;
+  src: url('../../fonts/Roboto/RobotoCondensed-Italic.ttf'); }
+
+@font-face {
+  font-family: "Roboto Condensed";
+  font-weight: bold;
+  font-style: normal;
+  src: url('../../fonts/Roboto/RobotoCondensed-Bold.ttf'); }
+
+@font-face {
+  font-family: "Roboto Condensed";
+  font-weight: bold;
+  font-style: italic;
+  src: url('../../fonts/Roboto/RobotoCondensed-BoldItalic.ttf'); }
+
+@font-face {
+  font-family: "Roboto Condensed Light";
+  font-weight: normal;
+  font-style: normal;
+  src: url('../../fonts/Roboto/RobotoCondensed-Light.ttf'); }
+
+@font-face {
+  font-family: "Roboto Condensed Light";
+  font-weight: normal;
+  font-style: italic;
+  src: url('../../fonts/Roboto/RobotoCondensed-LightItalic.ttf'); }
+
 /* Montserrat */
 @font-face {
   font-family: "Montserrat";
