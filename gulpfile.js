@@ -101,7 +101,12 @@ gulp.task('update', function() {
 	gulp.watch('src/styles/sass/**/*.scss', function(event) {
 		return gulp.src(event.path)
 			.pipe(sass())
-			.pipe(gulp.dest('src/styles/css'))
+			.pipe(gulp.dest('src/styles/css'));
+	});
+	// For some reason, when CSS files in an HTML import are refreshed, the page won't update.
+	// After SASS compiles and CSS is updated, refresh index.html.
+	gulp.watch('src/styles/css/**/*.css', function(event) {
+		return gulp.src('src/index.html')
 			.pipe(connect.reload());
 	});
 	// Watch JavaScript for changes.
