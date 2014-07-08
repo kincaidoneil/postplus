@@ -17,18 +17,13 @@
 				// The element's 'src' attribute specifies the source of the image.
 				xhr.open('GET', this.src, true);
 				xhr.responseType = 'blob';
-				// Separate the two functions due to scope ('this') conflicts.
-				// Scope in the onload function is necessary to get the blob response...
-				xhr.onload = function(event) {
-					updateImage(this.response);
-				};
-				// ...while access to the Polymer() wrapper is necessary to access the image element.
-				// As both require 'this' references, separate functions are required.
-				var updateImage = function(blob) {
-					$(this.$.image)
-						.attr('src', window.URL.createObjectURL(blob)) // Convert response to blob; set image source to blob.
+				// Save the image element outside the onload function as scope changes ('this' doesn't mean the same thing).
+				var image = this.$.image;
+				xhr.onload = function() {
+					$(image)
+						.attr('src', window.URL.createObjectURL(this.response)) // Convert response to blob; set image source to blob.
 						.animate({opacity: 1}, 400); // Fade-in image after its loaded.
-				}.bind(this); // Broaden the function's scope to the Polymer() wrapper so it can access the image element.
+				};
 				xhr.send();
 			}
 		});
