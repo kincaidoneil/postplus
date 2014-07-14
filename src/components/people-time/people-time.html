@@ -1,0 +1,46 @@
+<link rel="import" href="../../lib/polymer/polymer.html">
+<polymer-element name="people-time" attributes="fb insta">
+	<template>
+		{{timeElapsed}}
+	</template>
+	<script type="text/javascript">
+		Polymer('people-time', {
+			ready: function() {
+				// Parse dates given for both Facebook and Instagram posts.
+				if (this.fb !== null) {
+					var timestamp = new Date(Date.parse(this.fb));
+				} else if (this.insta !== null) {
+					var timestamp = new Date(this.insta * 1000);
+				}
+				var today = new Date();
+				// Number of milliseconds since post was created: current time - time of creation.
+				var diff = today - timestamp;
+				// Units of time in milliseconds.
+				var second = 1000;
+				var minute = second * 60;
+				var hour = minute * 60
+				var day = hour * 24;
+				var week =  day * 7;
+				// If one week or more has elapsed.
+				if (diff / week >= 1) {
+					this.timeElapsed = String(Math.round(diff / week)) + 'w';
+				// If one day or more has elapsed.
+				} else if (diff / day >= 1) {
+					this.timeElapsed = String(Math.round(diff / day)) + 'd';
+				// If one hour or more has elapsed.
+				} else if (diff / hour >= 1) {
+					this.timeElapsed = String(Math.round(diff / hour)) + 'h';
+				// If one minute or more has elapsed.
+				} else if (diff / minute >= 1) {
+					this.timeElapsed = String(Math.round(diff / minute)) + 'm';
+				// If one second or more has elapsed.
+				} else if (diff / second >= 1) {
+					this.timeElapsed = String(Math.round(diff / second)) + 's';
+				// If less than one second has elapsed.
+				} else {
+					this.timeElapsed = 'Just now';
+				}
+			}
+		});
+	</script>
+</polymer-element>

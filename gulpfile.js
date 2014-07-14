@@ -3,29 +3,25 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var gulp = require('gulp');
-
 var htmlReplace = require('gulp-html-replace');
-
 var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var concatCSS = require('gulp-concat-css');
-
 var vulcanize = require('gulp-vulcanize');
-
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-
-var handlebars = require('gulp-ember-handlebars');
-
 var connect = require('gulp-connect');
-
-// Both below are not used...YET.
-var filter = require('gulp-filter');
-var minifyHTML = require('gulp-htmlmin');
+var clean = require('gulp-rimraf');
+var runSeq = require('run-sequence');
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // BUILD TASKS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+gulp.task('clean', function() {
+	return gulp.src('build/', {read: false})
+		.pipe(clean()); // Delete build/ to allow for nice, clean files!
+});
 
 gulp.task('styles', function() {
 	return gulp.src('src/styles/sass/**/*.scss')
@@ -51,23 +47,7 @@ gulp.task('scripts', function() {
 		.pipe(gulp.dest('build/scripts'));
 });
 
-gulp.task('templates', function() {
-	return gulp.src('src/templates/**/*.hbs')
-		.pipe(handlebars({ // Compile Handlebars templates into JS.
-			outputType: 'browser'
-		}))
-		.pipe(concat('templates.js')) // Concat the JS files into one.
-		.pipe(gulp.dest('src/templates'))
-		.pipe(uglify({ // Minify it, remove comments, etc.
-			compress: {
-				drop_console: true
-			}
-		}))
-		.pipe(gulp.dest('build/templates'));
-});
-
 gulp.task('html', function() {
-	var htmlFilter = filter('**/*.html');
 	return gulp.src('src/index.html')
 		// Replace CSS/JS with references to the single, concatenated files.
 		.pipe(htmlReplace({
@@ -107,41 +87,36 @@ gulp.task('lib', function() {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 gulp.task('connect', connect.server({
-		root: ['src'],
-		host: 'localhost',
-		port: 8000,
-		livereload: true,
-		open: {
-			browser: 'chrome'
-		}
+	root: ['src'],
+	host: 'localhost',
+	port: 8000,
+	livereload: true,
+	open: {
+		browser: 'chrome'
+	}
 }));
 
 gulp.task('update', function() {
-	// Watch SASS for changes.
+	// Watch SASS for changes (including SASS for web components).
 	gulp.watch('src/styles/sass/**/*.scss', function(event) {
-		gulp.src(event.path)
+		return gulp.src(event.path)
 			.pipe(sass())
-			.pipe(gulp.dest('src/styles/css'))
-			.pipe(connect.reload());
+			.pipe(gulp.dest('src/styles/css'));
 	});
-	// Watch Handlebars for changes.
-	gulp.watch('src/templates/**/*.hbs', function(event) {
-		gulp.src(event.path)
-			.pipe(handlebars({
-				outputType: 'browser'
-			}))
-			.pipe(concat('templates.js'))
-			.pipe(gulp.dest('src/templates'))
+	// For some reason, when CSS files in an HTML import are refreshed, the page won't update.
+	// After SASS compiles and CSS is updated, refresh index.html.
+	gulp.watch('src/styles/css/**/*.css', function(event) {
+		return gulp.src('src/index.html')
 			.pipe(connect.reload());
 	});
 	// Watch JavaScript for changes.
 	gulp.watch('src/scripts/**/*.js', function(event) {
-		gulp.src(event.path)
+		return gulp.src(event.path)
 			.pipe(connect.reload());
 	});
 	// Watch HTML for changes (index.html or web components).
 	gulp.watch('src/**/*.html', function(event) {
-		gulp.src(event.path)
+		return gulp.src('src/index.html')
 			.pipe(connect.reload());
 	});
 });
@@ -150,25 +125,34 @@ gulp.task('update', function() {
 // SET DEFAULT FOR 'gulp' COMMAND
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-gulp.task('default', ['build', 'watch']);
+gulp.task('build', function() {
+	runSeq(
+		// Delete build/ to allow for nice, clean files!
+		'clean',
+		// Compile, concat, minify and copy SASS files.
+		'styles',
+		// Concat, minify and copy JavaScript files.
+		'scripts',
+		// Replace HTML; concat Polymer components; copy.
+		'html',
+		// Copy other miscellaneous assets.
+		'fonts',
+		'images',
+		'lib'
+	);
+});
 
-gulp.task('build', [
-	// Compile, concat, minify and copy SASS files.
-	'styles',
-	// Concat, minify and copy JavaScript files.
-	'scripts',
-	// Compile and copy handlebars templates.
-	'templates',
-	// Replace HTML; concat Polymer components; copy.
-	'html',
-	// Copy other miscellaneous assets.
-	'fonts',
-	'images',
-	'lib',
-]);
+gulp.task('watch', function() {
+	runSeq(
+		// Initiate a livereload server; compile files and reload when updated.
+		'connect',
+		'update'
+	);
+});
 
-gulp.task('watch', [
-	// Initiate a livereload server; compile files and reload when updated.
-	'connect',
-	'update'
-]);
+gulp.task('default', function() {
+	runSeq(
+		'build', 
+		'watch'
+	);
+});

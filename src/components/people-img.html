@@ -1,0 +1,31 @@
+<link rel="import" href="../lib/polymer/polymer.html">
+<polymer-element name="people-img" attributes="src">
+	<template>
+		<style type="text/css">
+			/* Allow image to fade-in after its loaded. */
+			#image {
+				opacity: 0;
+			}
+		</style>
+		<img id="image" />
+	</template>
+	<script type="text/javascript">
+		Polymer('people-img', {
+			ready: function() {
+				// Initialize XMLHttpRequest to fetch image blob data.
+				var xhr = new XMLHttpRequest();
+				// The element's 'src' attribute specifies the source of the image.
+				xhr.open('GET', this.src, true);
+				xhr.responseType = 'blob';
+				// Save the image element outside the onload function as scope changes ('this' doesn't mean the same thing).
+				var image = this.$.image;
+				xhr.onload = function() {
+					$(image)
+						.attr('src', window.URL.createObjectURL(this.response)) // Convert response to blob; set image source to blob.
+						.animate({opacity: 1}, 400); // Fade-in image after its loaded.
+				};
+				xhr.send();
+			}
+		});
+	</script>
+</polymer-element>
