@@ -1,0 +1,23 @@
+<!-- POLYMER -->
+<link rel="import" href="../../lib/polymer/polymer.html">
+<polymer-element name="fb-img" attributes="src">
+	<template>
+		<!-- MARKUP -->
+		<!-- Only load the image after the JavaScript logic has been executed. -->
+		<template if="{{image}}">
+			<people-img src="{{image}}"></people-img>
+		</template>
+	</template>
+	<!-- SCRIPTS -->
+	<script type="text/javascript">
+		Polymer('fb-img', {
+			ready: function() {
+				// Remove portion of URL dictating the small size.
+				// If there is a '/v/' preceding the '/t1.0...', remove it first.
+				this.src = this.src.replace(/(\/v\/)/gim, '/');
+				// Replace '/t' or to '0/' with a single '/': https://fbcdn...hd.net/hphotos-ak-xfp1/t1.0-9/p130x130/10383...640_n.jpg
+				this.image = this.src.replace(/(\/t).+(0\/)/gim, '/');
+			}
+		});
+	</script>
+</polymer-element>
