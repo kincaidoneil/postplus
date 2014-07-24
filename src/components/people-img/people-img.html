@@ -1,0 +1,41 @@
+<!-- DEPENDENCIES -->
+<link rel="import" href="../../lib/polymer/polymer.html">
+<polymer-element name="people-img" attributes="src">
+	<template>
+		<!-- STYLES -->
+		<style type="text/css">
+			/* Allow image to fade-in after its loaded. */
+			#image {
+				opacity: 0;
+			}
+		</style>
+		<!-- MARKUP -->
+		<img id="image" src="{{src}}" />
+	</template>
+	<!-- SCRIPTS -->
+	<script type="text/javascript">
+		Polymer('people-img', {
+			ready: function() {
+				var image = this.$.image;
+				// First, try loading the image like normal (e.g., in a browser).
+				$(image).on('load', function() {
+					$(image).animate({opacity: 1}, 400);
+				// If it fails, load it as a blob via XHR (e.g., in a Chrome App).
+				}).on('error', function() {
+					// Initialize XMLHttpRequest to fetch image blob data.
+					var xhr = new XMLHttpRequest();
+					xhr.open('GET', this.src, true);
+					xhr.responseType = 'blob';
+					xhr.onload = function() {
+						if (xhr.readyState === 4 && xhr.status === 200) {
+							// Convert response to blob; set image source to blob.
+							this.src = window.URL.createObjectURL(xhr.response);
+							$(this.$.image).animate({opacity: 1}, 400);
+						}
+					}.bind(this);
+					xhr.send();
+				}.bind(this));
+			}
+		});
+	</script>
+</polymer-element>
