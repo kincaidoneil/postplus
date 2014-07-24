@@ -3,31 +3,17 @@
 	<head>
 		<meta charset="utf-8">
 		<title>People+</title>
-		<!-- CSS -->
-			<!-- build:css -->
-			<link rel="stylesheet" href="styles/css/default.css" />
-			<!-- endbuild -->
-		<!-- LIBRARIES -->
-			<script src="lib/jquery/dist/jquery.min.js"></script>
-			<script src="lib/platform/platform.js"></script>
-		<!-- HTML IMPORTS -->
-			<link rel="import" href="lib/paper-elements/paper-elements.html">
-			<link rel="import" href="lib/core-icons/core-icons.html">
-			<link rel="import" href="components/people-img.html">
-			<link rel="import" href="components/people-card.html">
-			<link rel="import" href="components/people-column.html">
-		<!-- JAVASCRIPT -->
-			<!-- build:js -->
-			<script src="scripts/app.js"></script>
-			<!-- endbuild -->
+		<script src="lib/platform/platform.js"></script>
+		<!-- Core & Paper elements -->
+		<link rel="import" href="lib/core-elements/core-elements.html">
+		<link rel="import" href="lib/paper-elements/paper-elements.html">
+		<link rel="import" href="lib/core-icons/iconsets/social-icons.html">
+		<!-- Compoments -->
+		<link rel="import" href="components/people-elements/people-elements.html">
+		<!-- jQuery -->
+		<script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
 	</head>
 	<body>
-		<div id="headerPane">
-			<h1>PEOPLE+</h1>
-			<img id="settingsButton" src="images/settings.png" />
-		</div>
-		<div id="columnPane">
-			<people-column></people-column>
-		</div>
+		<people-dash></people-dash>
 	</body>
 </html>

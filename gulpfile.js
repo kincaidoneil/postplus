@@ -3,16 +3,14 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var gulp = require('gulp');
-var htmlReplace = require('gulp-html-replace');
 var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
-var concatCSS = require('gulp-concat-css');
 var vulcanize = require('gulp-vulcanize');
-var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var connect = require('gulp-connect');
 var clean = require('gulp-rimraf');
 var runSeq = require('run-sequence');
+var htmlMin = require('gulp-cleanhtml');
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // BUILD TASKS
@@ -24,41 +22,42 @@ gulp.task('clean', function() {
 });
 
 gulp.task('styles', function() {
-	return gulp.src('src/styles/sass/**/*.scss')
+	return gulp.src('src/components/**/*.scss', {base: 'src/components'}) // Set base to 'src/components' so each file goes into the same directory it started.
 		.pipe(sass()) // Compile SASS into CSS.
-		.pipe(gulp.dest('src/styles/css'))
-		.pipe(concatCSS('styles.css')) // Concat CSS files into one.
 		.pipe(minifyCSS({ // Minify it, remove comments, etc.
 			keepSpecialComments: 0,
 			keepBreaks: false,
 			removeEmpty: true
 		}))
-		.pipe(gulp.dest('build/styles'));
+		.pipe(gulp.dest('src/components'));
 });
 
-gulp.task('scripts', function() {
-	return gulp.src('src/scripts/**/*.js')
-		.pipe(concat('scripts.js')) // Concat the JS files into one.
-		.pipe(uglify({ // Minify it, remove comments, etc.
-			compress: {
-				drop_console: true
-			}
-		}))
-		.pipe(gulp.dest('build/scripts'));
-});
-
-gulp.task('html', function() {
+gulp.task('vulcanize', function() {
 	return gulp.src('src/index.html')
-		// Replace CSS/JS with references to the single, concatenated files.
-		.pipe(htmlReplace({
-			'js': 'scripts/scripts.js',
-			'css': 'styles/styles.css'
-		}))
-		// Concatenate Polymer web components into a single file. 
+		// Concatenate Polymer web components into a single file.
 		.pipe(vulcanize({
 			dest: 'build/',
 			csp: true, // No inline scripts allowed to be in accordance with CSP.
 			strip: true // Remove comments...if it works. It's been very hit or miss.
+		}))
+		.pipe(gulp.dest('build/'));
+});
+
+gulp.task('html', function() {
+	return gulp.src('build/index.html')
+		.pipe(htmlMin({
+			collapseWhitespace: true,
+			removeComments: true
+		}))
+		.pipe(gulp.dest('build/'))
+});
+
+gulp.task('scripts', function() {
+	return gulp.src('build/index.js')
+		.pipe(uglify({ // Minify it, remove comments, etc.
+			compress: {
+				drop_console: true
+			}
 		}))
 		.pipe(gulp.dest('build/'));
 });
@@ -97,25 +96,14 @@ gulp.task('connect', connect.server({
 }));
 
 gulp.task('update', function() {
-	// Watch SASS for changes (including SASS for web components).
-	gulp.watch('src/styles/sass/**/*.scss', function(event) {
-		return gulp.src(event.path)
-			.pipe(sass())
-			.pipe(gulp.dest('src/styles/css'));
+	// Watch SASS for changes to compile them.
+	gulp.watch('src/components/**/*.scss', function(event) {
+		return gulp.src(event.path, {base: 'src/components'}) // Set base to 'src/components' so each file goes into the same directory it started.
+			.pipe(sass()) // Compile SASS into CSS.
+			.pipe(gulp.dest('src/components/'));
 	});
-	// For some reason, when CSS files in an HTML import are refreshed, the page won't update.
-	// After SASS compiles and CSS is updated, refresh index.html.
-	gulp.watch('src/styles/css/**/*.css', function(event) {
-		return gulp.src('src/index.html')
-			.pipe(connect.reload());
-	});
-	// Watch JavaScript for changes.
-	gulp.watch('src/scripts/**/*.js', function(event) {
-		return gulp.src(event.path)
-			.pipe(connect.reload());
-	});
-	// Watch HTML for changes (index.html or web components).
-	gulp.watch('src/**/*.html', function(event) {
+	// Watch all files for changes to reload index.html.
+	gulp.watch('src/**', function(event) {
 		return gulp.src('src/index.html')
 			.pipe(connect.reload());
 	});
@@ -129,12 +117,14 @@ gulp.task('build', function() {
 	runSeq(
 		// Delete build/ to allow for nice, clean files!
 		'clean',
-		// Compile, concat, minify and copy SASS files.
+		// Compile SASS; minify resulting CSS files.
 		'styles',
-		// Concat, minify and copy JavaScript files.
-		'scripts',
-		// Replace HTML; concat Polymer components; copy.
+		// Concat Polymer components into one file. Export scripts to index.js.
+		'vulcanize',
+		// Minify HTML and remove comments returned from vulcanize.
 		'html',
+		// Minify JavaScript file returned from vulcanize.
+		'scripts',
 		// Copy other miscellaneous assets.
 		'fonts',
 		'images',
