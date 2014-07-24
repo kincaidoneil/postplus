@@ -1,0 +1,58 @@
+<!-- POLYMER -->
+<link rel="import" href="../../lib/polymer/polymer.html">
+<polymer-element name="insta-card" attributes="post">
+	<template>
+		<!-- STYLES -->
+		<link rel="stylesheet" type="text/css" href="../people-card/people-card.css">
+		<!-- MARKUP -->
+		<div id="card">
+			<div id="smTopPane">
+				<people-img id="smStatusPic" src="{{post.user.profile_picture}}"></people-img>
+			</div>
+			<div id="smBottomPane">
+				<div id="smDetails">
+					<span id="smName">
+						{{post.user.full_name}}
+					</span>
+					<span id="smUsername">
+						@{{post.user.username}}
+					</span>
+					<span id="smTimestamp">
+						<people-time timestamp="{{post.created_time}}" service="Instagram"></people-time>
+					</span>
+				</div>
+				<!-- <div id="smPostStats">
+					<template if="{{post.likes}}">
+						<img id="smIcon" src="../images/like-14.png" />
+						{{post.likes.data.length}}
+					</template>
+					<template if="{{post.comments}}">
+						<img id="smIcon" src="../images/comment-14.png" />
+						{{post.comments.data.length}}
+					</template>
+				</div> -->
+				<template if="{{post.type === 'image'}}">
+					<people-img id="smInstaPic" src="{{post.images.standard_resolution.url}}"></fb-img>
+				</template>
+				<template if="{{post.type === 'video'}}">
+					<video id="smInstaVideo" controls src="{{post.videos.standard_resolution.url}}"></video>
+				</template>
+				<template if="{{post.caption !== null}}">
+					<div id="smInstaCaption">
+						{{post.caption.text}}
+					</div>
+				</template>
+			</div>
+		</div>
+	</template>
+	<!-- SCRIPTS -->
+	<script type="text/javascript">
+		Polymer('insta-card', {
+			ready: function() {
+				
+				// Write some code here.
+				
+			}
+		});
+	</script>
+</polymer-element>

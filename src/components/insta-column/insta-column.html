@@ -1,0 +1,146 @@
+<!-- POLYMER -->
+<link rel="import" href="../../lib/polymer/polymer.html">
+<polymer-element name="insta-column" attributes="accessToken">
+	<template>
+		<!-- STYLES -->
+		<link rel="stylesheet" type="text/css" href="../people-column/people-column.css">
+		<!-- MARKUP -->
+		<div id="columnContainer">
+			<div id="columnTopContainer">
+				<div id="columnTop" style="background: #3F729B">
+					<core-icon icon="social:post-instagram" size="20"></core-icon>
+					<div id="columnLabel">Instagram</div>
+				</div>
+				<div id="columnShadow">
+					<paper-shadow z="2"></paper-shadow>
+				</div>
+			</div>
+			<div id="column">
+				<template repeat="{{post in feed}}">
+					<insta-card post="{{post}}"></insta-card>
+				</template>
+			</div>
+		</div>
+	</template>
+	<!-- SCRIPTS -->
+	<script type="text/javascript">
+		Polymer('insta-column', {
+			ready: function() {
+				// Make request to load ..
+				this.basePage = 'https://api.instagram.com/v1/users/self/feed?count=20&access_token=' + this.accessToken;
+				this.request(this.basePage, function(response) {
+					if (response.meta.code === 200) {
+						if (response.data.length >= 1) {
+							this.newerPage = this.basePage + '&min_id=' + response.data[0].id;
+							this.olderPage = response.pagination.next_url;
+							this.feed = response.data;
+						}
+					}
+				}, function() {
+					// ERROR HANDLING
+				}, function() {
+					this.newer();
+				});
+				// ...
+				$(document).ready(function() {
+					$(this.$.column).on('scroll', function() {
+						this.older();
+					}.bind(this));
+				}.bind(this));
+			},
+			/**
+			 * [basePage description]
+			 * @type {String}
+			 */
+			basePage: '',
+			/**
+			 * [olderPage description]
+			 * @type {String}
+			 */
+			olderPage: '',
+			/**
+			 * [newerPage description]
+			 * @type {String}
+			 */
+			newerPage: '',
+			/**
+			 * [newer description]
+			 */
+			newer: function() {
+				this.request(this.newerPage, function(response) {
+					if (response.meta.code === 200) {
+						if (response.data.length >= 1) {
+							this.newerPage = this.basePage + '&min_id=' + response.data[0].id;
+							this.feed = response.data.concat(this.feed);
+						}
+					}
+				}, function() {
+					// ERROR HANDLING.
+				}, function() {
+					// Attempt to update Instagram every 30 seconds.
+					setTimeout(function() {
+						this.newer();
+					}.bind(this), 30000);
+				});
+			},
+			/**
+			 * [older description]
+			 */
+			older: function() {
+				var scrollHeight = $(this.$.column)[0].scrollHeight;
+				var scrollPos = $(this.$.column).scrollTop();
+				if (scrollHeight - scrollPos <= 1500) {
+					this.request(this.olderPage, function(response) {
+						if (response.meta.code === 200) {
+							if (response.data.length >= 1) {
+								this.olderPage = response.pagination.next_url;
+								this.feed = this.feed.concat(response.data);
+							}
+						}
+					}, function() {
+						// ERROR HANDLING.
+					});	
+				}
+			},
+			/**
+			 * [request description]
+			 * @param  {String}   url    [description]
+			 * @param  {Function} done   [description]
+			 * @param  {Function} error  [description]
+			 * @param  {Function} always [description]
+			 */
+			request: function(url, done, error, always) {
+				// Only run if no other requests are running.
+				if (this.loading === false) {
+					// Prevent other requests from running.
+					this.loading = true;
+					// Send AJAX request.
+					$.ajax({
+						type: 'GET',
+						dataType: 'jsonp',
+						url: url,
+						context: this // Set scope of callback functions.
+					}).done(function(response) {
+						// FOR TESTING PURPOSES ONLY.
+						console.log(response);
+						// Run success callback. Set scope.
+						done.call(this, response);
+					}).fail(function(xhr, status, text) {
+						// Run error callback. Set scope.
+						error.call(this, xhr, status, text);
+					}).always(function() {
+						// Loading has finished, whether there was an error or not.
+						// Allow additional requests to run.
+						this.loading = false;
+						always.call(this);
+					});
+				}
+			},
+			/**
+			 * [loading description]
+			 * @type {Boolean}
+			 */
+			loading: false
+		});
+	</script>
+</polymer-element>
