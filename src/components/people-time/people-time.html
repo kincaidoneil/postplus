@@ -1,16 +1,22 @@
+<!-- POLYMER -->
 <link rel="import" href="../../lib/polymer/polymer.html">
-<polymer-element name="people-time" attributes="fb insta">
+<polymer-element name="people-time" attributes="timestamp service">
 	<template>
+		<!-- MARKUP -->
 		{{timeElapsed}}
 	</template>
+	<!-- SCRIPTS -->
 	<script type="text/javascript">
 		Polymer('people-time', {
 			ready: function() {
+				this.update();
+			},
+			update: function() {
 				// Parse dates given for both Facebook and Instagram posts.
-				if (this.fb !== null) {
-					var timestamp = new Date(Date.parse(this.fb));
-				} else if (this.insta !== null) {
-					var timestamp = new Date(this.insta * 1000);
+				if (this.service === 'Facebook') {
+					var timestamp = new Date(Date.parse(this.timestamp));
+				} else if (this.service === 'Instagram') {
+					var timestamp = new Date(this.timestamp * 1000);
 				}
 				var today = new Date();
 				// Number of milliseconds since post was created: current time - time of creation.
@@ -40,6 +46,10 @@
 				} else {
 					this.timeElapsed = 'Just now';
 				}
+				// Update the timestamp on posts every 30 seconds.
+				setTimeout(function() {
+					this.update();
+				}.bind(this), 30000);
 			}
 		});
 	</script>
