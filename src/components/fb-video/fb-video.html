@@ -5,7 +5,7 @@
 		<!-- MARKUP -->
 		<!-- Only load the video after the JavaScript logic has been executed. -->
 		<template if="{{youtube}}">
-			<iframe id="smFbVideo" class="youtubeVideo" src="{{src}}"></iframe>
+			<iframe id="smFbVideo" class="youtubeVideo" src="{{src}}" allowfullscreen></iframe>
 		</template>
 		<template if="{{!youtube}}">
 			<video id="smFbVideo" controls src="{{src}}"></video>
