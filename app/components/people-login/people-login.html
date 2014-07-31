@@ -1,0 +1,579 @@
+<!-- POLYMER -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<polymer-element name="people-login">
+	<template>
+		<!-- STYLES -->
+		<link rel="stylesheet" type="text/css" href="people-login.css">
+		<!-- MARKUP -->
+		<!-- Accounts Pane -->
+		<div id="accountsPane">
+			<div id="loginButtonContainer">
+				<div id="twitterButton" class="button loginButton loginButtonActive" data-service="Twitter" style="background: #00ACED">
+					<img class="icon" src="/images/twitter-48.png">
+					<div class="textContainer">Add Twitter</div>
+				</div>
+				<div id="fbButton" class="button loginButton loginButtonActive" data-service="Facebook" style="background: #3B5998">
+					<img class="icon" src="/images/fb-48.png" />
+					<div class="textContainer">Add Facebook</div>
+				</div>
+				<div id="instaButton" class="button loginButton loginButtonActive" data-service="Instagram" style="background: #3F729B">
+					<img class="icon" src="/images/insta-48.png" />
+					<div class="textContainer">Add Instagram</div>
+				</div>
+			</div>
+			<div id="setupProgress" class="loading"></div>
+			<paper-button id="cancelButton" label="Cancel"></paper-button>
+			<paper-button id="finishButton" label="Finish"></paper-button>
+		</div>
+		<!-- Intro Pane -->
+		<div id="introPane">
+			<div id="introContainer">
+				<h1>PEOPLE+</h1>
+				<h3>Welcome! Get started by adding your accounts.<br />Remember: you can always add more or remove them later in Settings.</h3>
+			</div>
+		</div>
+	</template>
+	<!-- SCRIPTS -->
+	<script type="text/javascript" src="../../bower_components/CryptoJS/rollups/hmac-sha1.js"></script>
+	<script type="text/javascript" src="../../bower_components/CryptoJS/components/enc-base64-min.js"></script>
+	<script type="text/javascript" src="twitter.js"></script>
+	<script type="text/javascript">
+		Polymer('people-login', {
+			ready: function() {
+				
+				var page = {
+					ui: function() {
+						// Center align intro pane content.
+						$('#introContainer').css('margin-top', ($(window).height() - $('#introContainer').height()) / 2);
+						// Delay animations so less is happening at once; make them more apparent.
+						setTimeout(function() {
+							// Build-in page objects.
+							$(this.$.introPane).fadeIn(700);
+							$(this.$.accountsPane).animate({left: 0}, 1200);
+							$(this.$.twitterButton).animate({left: 0, opacity: 1}, 800);
+							$(this.$.fbButton).delay(100).animate({left: 0, opacity: 1}, 800);
+							$(this.$.instaButton).delay(200).animate({left: 0, opacity: 1}, 800);
+						}.bind(this), 200);
+					},
+					addEvents: function() {
+						
+						$(window).resize(function() {
+							page.ui();
+						});
+						
+						$(this.$.twitterButton).click(function(event) {
+							// Since there are preliminary request(s) prior to the web auth, update authorization UI prior to it as well.
+							authzInProgress = true;
+							updateAuthzUI();
+							
+							$.ajax({
+								type: 'POST',
+								url: 'https://api.twitter.com/oauth/request_token'
+							}).done(function(response) {
+								console.log(response);
+							}).fail(function(error, xhr, status) {
+								console.log(error);
+							});
+							
+							/*var oauthRequestToken = getTwitterOauthRequestToken().done(function(response) {
+								console.log('SUCCESS. Request access token finished.');
+								console.log(response);
+								var result = getURLHash(response.responseText);
+								var oauthRequestToken = result.oauth_token;
+								launchWebAuth(
+									requestURL = 'https://api.twitter.com/oauth/authenticate' +
+									'?oauth_token=' + oauthRequestToken,
+									service = 'Twitter'
+								);
+							}).fail(function(error, xhr, status) {
+								console.log('ERROR. Request access token finished.');
+								console.log(error);
+								authzInProgress = false;
+								updateAuthzUI();
+								errorMsg('Twitter');
+							});*/
+							
+						});
+						
+						$(this.$.fbButton).click(function(event) {
+							launchWebAuth(
+								requestURL = 'https://www.facebook.com/dialog/oauth' +
+								'?client_id=' + '461111707272988' +
+								'&redirect_uri=' + encodeURIComponent(redirectURL) +
+								'&response_type=token' +
+								'&display=' + 'popup' +
+								'&scope=' + 'read_stream',
+								service = 'Facebook'
+							);
+						});
+						
+						$(this.$.instaButton).click(function(event) {
+							launchWebAuth(
+								requestURL = 'https://instagram.com/oauth/authorize' +
+								'?client_id=' + '13bd7f412a95474ab9c7749d99a27cfc' +
+								'&redirect_uri=' + encodeURIComponent(redirectURL) +
+								'&response_type=' + 'token' +
+								'&scope=' + 'likes+comments+relationships',
+								service = 'Instagram'
+							);
+						});
+						
+						$(this.$.finishButton).click(function(event) {
+							// Fade out of all page objects prior to navigation.
+							$('#accountsPane').fadeOut();
+							$('#introPane').fadeOut(function() {
+								// Send message to background page to navigate to main page.
+								var obj = JSON.stringify({
+									action: 'navigate',
+									page: 'pages/main/main.html'
+								});
+								chrome.runtime.connect({name: obj});
+							});
+						});
+						
+					}
+				};
+				
+				$(window).ready(function() {
+					page.ui.call(this);
+					page.addEvents.call(this);
+				}.bind(this));
+
+				// Whether a given authentication flow is in progress INCLUDING the portion in which user data is queried.
+				var authzInProgress = false;
+				// Object to hold authorization header data between function calls.
+				var twitterAuthzHeaderData = {};
+				// Redirect URL after user authentication.
+				var redirectURL = 'https://' + 'cbelflblieodjgigcghifpjnjhegjebb' + '.chromiumapp.org/';
+
+				function updateAuthzUI() {
+					if (authzInProgress === true) {
+						$('#finishButton').fadeOut();
+						$('#loginButtonContainer').fadeOut();
+						$('#cancelButton').fadeIn();
+						$('#setupProgress').fadeIn();
+					} else {
+						$('#setupProgress').fadeOut(200);
+						$('#cancelButton').fadeOut();
+						$('#loginButtonContainer').fadeIn();
+						// If there is an account, show finish button.
+						chrome.storage.sync.get('accounts', function(accounts) {
+							if ($.isEmptyObject(accounts)) {
+								$('#finishButton').fadeOut();
+							} else {
+								$('#finishButton').fadeIn();
+							}
+						});
+					}
+				}
+
+				function getTwitterAuthzHeaderData(url, method, includeCallback, oauth_token, oauth_token_secret) {
+					// Generate random 32 character string.
+					var oauth_nonce = '';
+					var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+					for (var i = 0; i < 32; i++) {
+						oauth_nonce += possible.charAt(Math.floor(Math.random() * possible.length));
+					}
+					var oauth_signature_method = 'HMAC-SHA1';
+					var oauth_timestamp = Math.round(new Date().getTime() / 1000);
+					var oauth_version = '1.0';
+					var oauth_callback = 'https://cbelflblieodjgigcghifpjnjhegjebb.chromiumapp.org/';
+					var oauth_consumer_key = 'JndzzjUy4Nej49X0qGDWNQ';
+					var oauth_consumer_secret = 'CCztEsN37EEHmy7xNlsHNiRou9IJxZBlYsuz4T7HLiE';
+					// Generate the INCREDIBLY COMPLEX Twitter signature.
+					// More info here: https://dev.twitter.com/docs/auth/creating-signature.
+					var paramStr = '';
+					var signatureBaseStr = '';
+					var signingKey = '';
+					// Create parameter string.
+					var paramStr;
+					if (includeCallback === true) {
+						paramStr = 'oauth_callback=' + encodeURIComponent(oauth_callback) + '&';
+					}
+					paramStr += 'oauth_consumer_key=' + oauth_consumer_key;
+					paramStr += '&oauth_nonce=' + oauth_nonce;
+					paramStr += '&oauth_signature_method=' + oauth_signature_method;
+					paramStr += '&oauth_timestamp=' + oauth_timestamp;
+					if (oauth_token !== null) {
+						paramStr += '&oauth_token=' + oauth_token;
+					}
+					paramStr += '&oauth_version=' + oauth_version;
+					// Create signature base string.
+					signatureBaseStr += method + '&';
+					signatureBaseStr += encodeURIComponent(url) + '&';
+					signatureBaseStr += encodeURIComponent(paramStr);
+					// Create signing key.
+					signingKey = encodeURIComponent(oauth_consumer_secret) + '&';
+					if (oauth_token_secret !== null) {
+						signingKey += encodeURIComponent(oauth_token_secret);
+					}
+					// Calculate the signature. Use HMAC-SHA1 encryption, then Base64 encode.
+					var signature = CryptoJS.HmacSHA1(signatureBaseStr, signingKey).toString();
+					console.log(signature);
+					signature = btoa(signature);
+					console.log(signature);
+					hi = {
+						oauth_signature: encodeURIComponent(signature),
+						oauth_callback: encodeURIComponent(oauth_callback),
+						oauth_timestamp: oauth_timestamp,
+						oauth_signature_method: oauth_signature_method,
+						oauth_version: oauth_version,
+						oauth_consumer_key: oauth_consumer_key,
+						oauth_consumer_secret: oauth_consumer_secret,
+						oauth_nonce: oauth_nonce
+					};
+					console.log(hi);
+					return hi;
+				}
+
+				function getTwitterOauthRequestToken() {
+					var method = 'POST';
+					var url = 'https://api.twitter.com/oauth/request_token';
+					var data = getTwitterAuthzHeaderData(url, method, true, null, null);
+					var authzHeader = 'OAuth oauth_callback="' + data.oauth_callback;
+					authzHeader += '", oauth_consumer_key="' + data.oauth_consumer_key;
+					authzHeader += '", oauth_nonce="' + data.oauth_nonce;
+					authzHeader += '", oauth_signature="' + data.oauth_signature;
+					authzHeader += '", oauth_signature_method="' + data.oauth_signature_method;
+					authzHeader += '", oauth_timestamp="' + data.oauth_timestamp;
+					authzHeader += '", oauth_version="' + data.oauth_version + '"';
+					console.log(authzHeader);
+					// Save data for later when exchanging a request token for an access token.
+					twitterAuthzHeaderData = {
+						oauth_callback: data.oauth_callback,
+						oauth_consumer_key: data.oauth_consumer_key,
+						oauth_nonce: data.oauth_nonce,
+						oauth_signature: data.oauth_signature,
+						oauth_signature_method: data.oauth_signature_method,
+						oauth_timestamp: data.oauth_timestamp,
+						oauth_version: data.oauth_version
+					};
+					// Make POST request.
+					/*return $.ajax({
+						type: method,
+						url: url,
+						dataType: 'jsonp',
+						headers: {
+							Authorization: authzHeader
+						},
+						timeout: 10000
+					});*/
+				}
+
+				function launchWebAuth(requestURL, service) {
+					if (authzInProgress) {
+						// Authorization already in progress.
+						return;
+					}
+					authzInProgress = true;
+					// Let user connet their account(s) to People+; show pane with login for the given service.
+					$(this.$.introContainer).fadeOut(function() {
+						// Dynamically add/remove <webview> as opposed to hiding it; the last URL will be reloaded when its shown--causes major problems.
+						$(this.$.introPane).append(
+							$('<webview></webview>')
+								.attr('id', 'webAuthContainer')
+								.attr('src', requestURL)
+								.on('loadcommit', function(event) {
+									var url = event.originalEvent.url;
+									var isTopLevel = event.originalEvent.isTopLevel;
+									if (isTopLevel == true && url.indexOf(redirectURL) != -1) {
+										// Success!
+										$('#webAuthContainer').remove();
+										$('#introContainer').fadeIn();
+										addAccount(service, url);
+									}
+								})
+						);
+						updateAuthzUI();
+						$('#cancelButton').click(function() {
+							$('#webAuthContainer').remove();
+							$('#introContainer').fadeIn();
+							authzInProgress = false;
+							updateAuthzUI();
+						});
+					});
+				}
+
+				function errorMsg(service) {
+					showAlert("We're sorry! It looks like People+ couldn't connect to " + service + ".");
+				}
+
+				function getURLHash(str) {
+					var vars = str.split(/[\#\?\&]/gim);
+					var obj = {};
+					for (var i = 0; i < vars.length; i++) {
+						var pair = vars[i].split('=');
+						obj[pair[0]] = pair[1];
+					}
+					return obj;
+				}
+
+				function addAccount(service, resultURL) {
+					// Make XHR requests.
+					switch (service) {
+						case 'Twitter':
+							// Get access token from variable in the returned URL.
+							var oauth_token = getURLHash(resultURL).oauth_token;
+							var oauth_verifier = getURLHash(resultURL).oauth_verifier;
+							// Make XHR request: convert request token (oauthToken) into an access token.
+							var url = 'https://api.twitter.com/oauth/access_token';
+							var authzHeader = 'OAuth oauth_consumer_key="' + twitterAuthzHeaderData.oauth_consumer_key;
+							authzHeader += '", oauth_nonce="' + twitterAuthzHeaderData.oauth_nonce;
+							authzHeader += '", oauth_signature="' + twitterAuthzHeaderData.oauth_signature;
+							authzHeader += '", oauth_signature_method="' + twitterAuthzHeaderData.oauth_signature_method;
+							authzHeader += '", oauth_timestamp="' + twitterAuthzHeaderData.oauth_timestamp;
+							authzHeader += '", oauth_token="' + oauth_token;
+							authzHeader += '", oauth_version="' + twitterAuthzHeaderData.oauth_version + '"';
+							WinJS.Promise.timeout(10000, WinJS.xhr({
+								type: 'POST',
+								url: url,
+								headers: {
+									'Authorization': authzHeader,
+									'Content-Length': parseInt(('oauth_verifier=' + oauth_verifier).length),
+									'Content-Type': 'application/x-www-form-urlencoded'
+								},
+								data: 'oauth_verifier=' + oauth_verifier
+							}).done(function(result) {
+								// Get access token.
+								var oauth_token = getURLHash(result.responseText).oauth_token;
+								var oauth_token_secret = getURLHash(result.responseText).oauth_token_secret;
+								// Make XHR request: fetch basic user information.
+								var url = 'https://api.twitter.com/1.1/account/verify_credentials.json';
+								var method = 'GET';
+								var data = getTwitterAuthzHeaderData(url, method, false, oauth_token, oauth_token_secret);
+								var authzHeader = 'OAuth oauth_consumer_key="' + data.oauth_consumer_key;
+								authzHeader += '", oauth_nonce="' + data.oauth_nonce;
+								authzHeader += '", oauth_signature="' + data.oauth_signature;
+								authzHeader += '", oauth_signature_method="' + data.oauth_signature_method;
+								authzHeader += '", oauth_timestamp="' + data.oauth_timestamp;
+								authzHeader += '", oauth_token="' + oauth_token;
+								authzHeader += '", oauth_version="' + data.oauth_version + '"';
+								WinJS.Promise.timeout(10000, WinJS.xhr({
+									type: method,
+									url: url,
+									headers: {
+										'Authorization': authzHeader,
+										'Content-Type': 'application/x-www-form-urlencoded',
+										'Content-Length': '0'
+									}
+								}).done(function(result) {
+									var accountData = JSON.parse(result.responseText);
+									// Fetch all accounts.
+									var appData = Windows.Storage.ApplicationData.current;
+									var roamingSettings = appData.roamingSettings;
+									// If no accounts exist...
+									if (!roamingSettings.values['accounts']) {
+										// Create new taffyDB database with new account details.
+										var accounts = TAFFY({
+											accountId: accountData.id,
+											oauthToken: oauth_token,
+											oauthTokenSecret: oauth_token_secret,
+											service: 'Twitter',
+											fullName: accountData.name,
+											username: accountData.screen_name,
+											profilePicture: accountData.profile_image_url_https,
+											// Remove '_normal.JPG' from end of url to indicate larger image.
+											profilePictureLarge: (accountData.profile_image_url_https).substring(0, accountData.profile_image_url_https.length - 11) + '.png',
+										});
+										// Export the taffyDB database to roaming settings.
+										roamingSettings.values['accounts'] = JSON.stringify(accounts().get());
+										// If there are already accounts...
+									} else {
+										// Load accounts into taffyDB.
+										var accounts = TAFFY(
+											roamingSettings.values['accounts']
+										);
+										// Add a new row to the database.
+										accounts.insert({
+											accountId: accountData.id,
+											oauthToken: oauth_token,
+											oauthTokenSecret: oauth_token_secret,
+											service: 'Twitter',
+											fullName: accountData.name,
+											username: accountData.screen_name,
+											profilePicture: accountData.profile_image_url_https,
+											// Remove '_normal.JPG' from end of url to indicate larger image.
+											profilePictureLarge: (accountData.profile_image_url_https).substring(0, accountData.profile_image_url_https.length - 11) + '.png',
+										});
+										// Export the taffyDB database back to roaming settings.
+										roamingSettings.values['accounts'] = JSON.stringify(accounts().get());
+									}
+									// Allow user to continue to main page, if not already.
+									authzInProgress = false;
+									updateAuthzUI();
+									// Update UI to allow no more Twitter accounts to be added.
+									$('.textContainer:eq(0)').text('Twitter Added');
+									$('.loginButton:eq(0)').css('background', 'gray');
+									$('.loginButton:eq(0)').unbind('click');
+								}, function(error) {
+									errorMsg(service);
+								}));
+							}, function(err) {
+								errorMsg(service);
+							}));
+							break;
+						case 'Facebook':
+							// Get access token from variable in the returned URL.
+							var shortAccessToken = getURLHash(resultURL).access_token;
+							// If it acutally returned an access token and didn't error.
+							if (typeof shortAccessToken != 'undefined' && shortAccessToken != null) {
+								// Make XHR request: fetch long-term (60 day) access token using short-term (2 hour) access token.
+								var url = 'https://graph.facebook.com/oauth/access_token' +
+									'?client_id=' + '461111707272988' +
+									'&redirect_uri=' + encodeURIComponent(redirectURL) +
+									'&client_secret=' + '0b6e647015c72dc9786325e3b82761f1' +
+									'&grant_type=' + 'fb_exchange_token' +
+									'&fb_exchange_token=' + encodeURIComponent(shortAccessToken);
+								$.ajax({
+									timeout: 10000,
+									url: url
+								}).done(function(result) {
+									// Get extended access token.
+									var longAccessToken = getURLHash(result).access_token;
+									// If it acutally returned an access token and didn't error.
+									if (typeof longAccessToken != 'undefined' && longAccessToken != null) {
+										// Make XHR request: fetch basic user information.
+										var url = 'https://graph.facebook.com/me' +
+											'?access_token=' + longAccessToken;
+										$.ajax({
+											dataType: 'json',
+											timeout: 10000,
+											url: url
+										}).done(function(result) {
+											var accountData = result;
+											// Fetch all accounts.
+											chrome.storage.sync.get('accounts', function(result) {
+												// If no accounts exist...
+												if ($.isEmptyObject(result)) {
+													// Create new taffyDB database with new account details.
+													accounts = TAFFY({
+														accountId: accountData.id,
+														accessToken: longAccessToken,
+														service: 'Facebook',
+														fullName: accountData.name,
+														username: accountData.username,
+														profilePicture: 'http://graph.facebook.com/' + accountData.username + '/picture',
+														profilePictureLarge: 'http://graph.facebook.com/' + accountData.username + '/picture?type=large'
+													});
+													// If there are already accounts...
+												} else {
+													// Load accounts into taffyDB.
+													accounts = TAFFY(result.accounts);
+													// Add a new row to the database.
+													accounts.insert({
+														accountId: accountData.id,
+														accessToken: longAccessToken,
+														service: 'Facebook',
+														fullName: accountData.name,
+														username: accountData.username,
+														profilePicture: 'http://graph.facebook.com/' + accountData.username + '/picture',
+														profilePictureLarge: 'http://graph.facebook.com/' + accountData.username + '/picture?type=large'
+													});
+												}
+												// Export the taffyDB database back to storage.
+												chrome.storage.sync.set({
+													accounts: JSON.stringify(accounts().get())
+												});
+												// Allow user to continue to main page, if not already.
+												authzInProgress = false;
+												updateAuthzUI();
+												// Update UI to allow no more Facebook accounts to be added.
+												$('.textContainer:eq(1)').text('Facebook Added');
+												$('.loginButton:eq(1)').css('background', 'gray');
+												$('.loginButton:eq(1)').unbind('click');
+												$('.loginButton:eq(1)').removeClass('loginButtonActive');
+											});
+										}).fail(function() {
+											authzInProgress = false;
+											updateAuthzUI();
+											errorMsg(service);
+										});
+									} else {
+										authzInProgress = false;
+										updateAuthzUI();
+										errorMsg(service);
+									}
+								}).fail(function(error) {
+									authzInProgress = false;
+									updateAuthzUI();
+									errorMsg(service);
+								});
+							} else {
+								authzInProgress = false;
+								updateAuthzUI();
+								errorMsg(service);
+							}
+							break;
+						case 'Instagram':
+							// Get access token from variable in the returned URL.
+							var accessToken = getURLHash(resultURL).access_token;
+							// If it acutally returned an access token and didn't error.
+							if (typeof accessToken != 'undefined' && accessToken != null) {
+								// Make XHR request: fetch information about user.
+								var url = 'https://api.instagram.com/v1/users/self/?access_token=' + encodeURIComponent(accessToken);
+								$.ajax({
+									dataType: 'json',
+									timeout: 10000,
+									url: url
+								}).done(function(result) {
+									var accountData = result.data;
+									// Fetch all accounts.
+									chrome.storage.sync.get('accounts', function(result) {
+										// If no accounts exist...
+										if ($.isEmptyObject(result)) {
+											// Create new taffyDB database with new account details.
+											accounts = TAFFY({
+												accountId: accountData.id,
+												accessToken: accessToken,
+												service: 'Instagram',
+												fullName: accountData.full_name,
+												username: accountData.username,
+												profilePicture: accountData.profile_picture,
+												profilePictureLarge: accountData.profile_picture
+											});
+											// If there are already accounts...
+										} else {
+											// Load accounts into taffyDB.
+											accounts = TAFFY(result.accounts);
+											// Add a new row to the database.
+											accounts.insert({
+												accountId: accountData.id,
+												accessToken: accessToken,
+												service: 'Instagram',
+												fullName: accountData.full_name,
+												username: accountData.username,
+												profilePicture: accountData.profile_picture,
+												profilePictureLarge: accountData.profile_picture
+											});
+										}
+										// Export the taffyDB database back to storage.
+										chrome.storage.sync.set({
+											accounts: JSON.stringify(accounts().get())
+										});
+										// Allow user to continue to main page, if not already.
+										authzInProgress = false;
+										updateAuthzUI();
+										// Update UI to allow no more Instagram accounts to be added.
+										$('.textContainer:eq(2)').text('Instagram Added');
+										$('.loginButton:eq(2)').css('background', 'gray');
+										$('.loginButton:eq(2)').unbind('click');
+										$('.loginButton:eq(2)').removeClass('loginButtonActive');
+									});
+								}).fail(function() {
+									authzInProgress = false;
+									updateAuthzUI();
+									errorMsg(service);
+								});
+							} else {
+								authzInProgress = false;
+								updateAuthzUI();
+								errorMsg(service);
+							}
+							break;
+					}
+				}
+				
+			}
+		});
+	</script>
+</polymer-element>

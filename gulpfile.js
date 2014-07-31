@@ -18,10 +18,10 @@ var replace = require('gulp-replace');
 // BUILD TASKS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Prepare the build directory for production; ready test to run LiveReload.
+// Prepare the dist directory for production; ready test to run LiveReload.
 gulp.task('build', function() {
 	runSeq(
-		// Delete build to allow for nice, clean files!
+		// Delete dist to allow for nice, clean files!
 		'clean',
 		// Compile SASS; minify resulting CSS files.
 		'styles',
@@ -38,30 +38,30 @@ gulp.task('build', function() {
 });
 
 gulp.task('clean', function() {
-	return gulp.src(['build', 'test'], {read: false})
-		.pipe(clean()); // Delete build and test to allow for nice, clean files!
+	return gulp.src(['dist', 'test'], {read: false})
+		.pipe(clean()); // Delete dist and test to allow for nice, clean files!
 });
 
 gulp.task('styles', function() {
-	return gulp.src('src/components/**/*.scss', {base: 'src/components'}) // Set base to 'src/components' so each file goes into the same directory it started.
+	return gulp.src('app/components/**/*.scss', {base: 'app/components'}) // Set base to 'app/components' so each file goes into the same directory it started.
 		.pipe(sass()) // Compile SASS into CSS.
 		.pipe(minifyCSS({ // Minify it, remove comments, etc.
 			keepSpecialComments: 0,
 			keepBreaks: false,
 			removeEmpty: true
 		}))
-		.pipe(gulp.dest('src/components'));
+		.pipe(gulp.dest('app/components'));
 });
 
 gulp.task('vulcanize', function() {
-	return gulp.src('src/index.html')
+	return gulp.src('app/index.html')
 		// Concatenate Polymer web components into a single file.
 		.pipe(vulcanize({
-			dest: 'build', // Required. Somehow it exports index.js to both build and test, though.
+			dest: 'dist', // Required. Somehow it exports index.js to both dist and test, though.
 			inline: true, // Make sure styles are inline; make sure external scripts get exported to index.js.
 			csp: true // Make sure inline scripts get exported to index.js to be in accordance with CSP.
 		}))
-		.pipe(gulp.dest('build'))
+		.pipe(gulp.dest('dist'))
 		// Embed the LiveReload middleware (after scripts have been exported to index.js and before comments are deleted).
 		.pipe(replace(
 			'<!-- Insert middleware here. -->',
@@ -71,42 +71,42 @@ gulp.task('vulcanize', function() {
 });
 
 gulp.task('html', function() {
-	return gulp.src('build/index.html')
-		// Minify and remove comments from HTML (purely for build).
+	return gulp.src('dist/index.html')
+		// Minify and remove comments from HTML (purely for dist).
 		.pipe(htmlMin({
 			collapseWhitespace: true,
 			removeComments: true
 		}))
-		.pipe(gulp.dest('build'));
+		.pipe(gulp.dest('dist'));
 });
 
 gulp.task('livereload', function() {
 	// Copy LiveReload middleware script to test.
-	return gulp.src('src/lib/chrome-app-livereload/livereload.js')
+	return gulp.src('app/bower_components/chrome-app-livereload/livereload.js')
 		.pipe(gulp.dest('test'));
 });
 
 gulp.task('manifest', function() {
-	// Copy Chrome App manifest and background.js to build and test directories.
-	return gulp.src(['src/manifest.json', 'src/background.js'])
+	// Copy Chrome App manifest and background.js to dist and test directories.
+	return gulp.src(['app/manifest.json', 'app/background.js'])
 		.pipe(gulp.dest('test'))
-		.pipe(gulp.dest('build'));
+		.pipe(gulp.dest('dist'));
 });
 
 gulp.task('fonts', function() {
-	// Copy fonts to the build/fonts directory.
-	return gulp.src('src/components/**/fonts/*.ttf')
+	// Copy fonts to the dist/fonts directory.
+	return gulp.src('app/components/**/fonts/*.ttf')
 		.pipe(flatten())
 		.pipe(gulp.dest('test/fonts'))
-		.pipe(gulp.dest('build/fonts'));
+		.pipe(gulp.dest('dist/fonts'));
 });
 
 gulp.task('images', function() {
-	// Copy images to the build/images directory.
-	return gulp.src('src/components/**/images/*.png')
+	// Copy images to the dist/images directory.
+	return gulp.src('app/components/**/images/*.png')
 		.pipe(flatten())
 		.pipe(gulp.dest('test/images'))
-		.pipe(gulp.dest('build/images'));
+		.pipe(gulp.dest('dist/images'));
 });
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -121,15 +121,15 @@ gulp.task('chrome', function() {
 	lr.listen(35729);
 	
 	// Watch SASS for changes to compile them.
-	gulp.watch('src/components/**/*.scss', function(event) {
-		return gulp.src(event.path, {base: 'src/components'}) // Set base to 'src/components' so each file goes into the same directory it started.
+	gulp.watch('app/components/**/*.scss', function(event) {
+		return gulp.src(event.path, {base: 'app/components'}) // Set base to 'app/components' so each file goes into the same directory it started.
 			.pipe(sass()) // Compile SASS into CSS.
-			.pipe(gulp.dest('src/components'));
+			.pipe(gulp.dest('app/components'));
 	});
 	
 	// When any files are updated, re-vulcanize index.html.
-	gulp.watch('src/**/*.{html,css,js}', function(event) {
-		return gulp.src('src/index.html')
+	gulp.watch('app/**/*.{html,css,js}', function(event) {
+		return gulp.src('app/index.html')
 			// Concatenate Polymer web components into a single file.
 			.pipe(vulcanize({
 				dest: 'test',
@@ -165,7 +165,7 @@ gulp.task('server', function() {
 	// Initiate BrowserSync server.
 	browserSync({
 		server: {
-			baseDir: 'src'
+			baseDir: 'app'
 		},
 		port: 8000,
 		browser: 'google chrome', // Automatically open up chrome...yay!
@@ -174,15 +174,15 @@ gulp.task('server', function() {
 	});
 	
 	// Watch SASS for changes to compile them.
-	gulp.watch('src/components/**/*.scss', function(event) {
-		return gulp.src(event.path, {base: 'src/components'}) // Set base to 'src/components' so each file goes into the same directory it started.
+	gulp.watch('app/components/**/*.scss', function(event) {
+		return gulp.src(event.path, {base: 'app/components'}) // Set base to 'app/components' so each file goes into the same directory it started.
 			.pipe(sass()) // Compile SASS into CSS.
-			.pipe(gulp.dest('src/components/'));
+			.pipe(gulp.dest('app/components/'));
 	});
 	
 	// Watch all files for changes to reload them.
-	gulp.watch('src/**', function(event) {
-		return gulp.src('src/**/*.{html,css,js,png}')
+	gulp.watch('app/**', function(event) {
+		return gulp.src('app/**/*.{html,css,js,png}')
 			.pipe(browserSync.reload({stream: true}));
 	});
 	

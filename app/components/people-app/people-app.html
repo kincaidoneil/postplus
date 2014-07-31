@@ -1,0 +1,38 @@
+<!-- DEPENDENCIES -->
+<!-- Polymer -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- Core and Paper Elements -->
+<link rel="import" href="../../bower_components/core-elements/core-elements.html">
+<link rel="import" href="../../bower_components/paper-elements/paper-elements.html">
+<link rel="import" href="../../bower_components/core-icons/iconsets/social-icons.html">
+<!-- Components -->
+<link rel="import" href="../fb-card/fb-card.html">
+<link rel="import" href="../fb-column/fb-column.html">
+<link rel="import" href="../fb-video/fb-video.html">
+<link rel="import" href="../insta-card/insta-card.html">
+<link rel="import" href="../insta-column/insta-column.html">
+<link rel="import" href="../people-dash/people-dash.html">
+<link rel="import" href="../people-img/people-img.html">
+<link rel="import" href="../people-login/people-login.html">
+<link rel="import" href="../people-time/people-time.html">
+<!-- jQuery -->
+<script type="text/javascript" src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<polymer-element name="people-app">
+	<template>
+		<!-- STYLES -->
+		<link rel="stylesheet" type="text/css" href="people-app.css">
+		<!-- MARKUP -->
+		<!-- <people-dash></people-dash> -->
+		<people-login></people-login>
+	</template>
+	<!-- SCRIPTS -->
+	<script type="text/javascript">
+		Polymer('people-app', {
+			ready: function() {
+				
+				// WRITE SOME CODE HERE.
+				
+			}
+		});
+	</script>
+</polymer-element>

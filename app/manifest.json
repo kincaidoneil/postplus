@@ -1,0 +1,32 @@
+{
+	"name": "People+",
+	"author": "Kincaid O'Neil",
+	"description": "The People+ app for Chrome aggregates posts from all your social networks (Facebook, Twitter, and Instagram) into one unified & simplified interface. See all your friends' posts in one place, and master you social life.",
+	"version": "0.2",
+	"manifest_version": 2,
+	"app": {
+		"background": {
+			"scripts": ["background.js"]
+		}
+	},
+	"permissions": [
+		/* For API calls. */
+		"https://*.facebook.com/",
+		"https://*.twitter.com/",
+		"https://*.instagram.com/",
+		/* For status pictures. */
+		"https://*.akamaihd.net/",
+		"https://*.fbcdn.net/",
+		/* For OAuth redirects. */
+		"https://*.chromiumapp.org/",
+		"storage",
+		"notifications",
+		"webview"
+	]
+	/*
+	"icons": {
+		"16": "calculator-16.png",
+		"128": "calculator-128.png"
+	}
+	*/
+}

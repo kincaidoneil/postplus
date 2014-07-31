@@ -3,9 +3,13 @@
 # =========================
 
 node_modules/
-build/
+
+dist/
 test/
+
+app/bower_components
 src/lib
+
 *.log
 
 # =========================

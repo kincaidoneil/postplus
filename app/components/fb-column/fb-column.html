@@ -1,0 +1,144 @@
+<!-- POLYMER -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<polymer-element name="fb-column" attributes="accessToken">
+	<template>
+		<!-- STYLES -->
+		<link rel="stylesheet" type="text/css" href="../people-column/people-column.css">
+		<!-- MARKUP -->
+		<div id="columnContainer">
+			<div id="columnTopContainer">
+				<div id="columnTop" style="background: #3B5998">
+					<core-icon icon="social:post-facebook" size="20"></core-icon>
+					<div id="columnLabel">Facebook</div>
+				</div>
+				<div id="columnShadow">
+					<paper-shadow z="2"></paper-shadow>
+				</div>
+			</div>
+			<div id="column">
+				<template repeat="{{post in feed}}">
+					<fb-card post="{{post}}" accessToken="{{accessToken}}"></fb-card>
+				</template>
+			</div>
+		</div>
+	</template>
+	<!-- SCRIPTS -->
+	<script type="text/javascript">
+		Polymer('fb-column', {
+			ready: function() {
+				// Make request to load ..
+				this.basePage = 'https://graph.facebook.com/me/home?access_token=' + this.accessToken;
+				this.request(this.basePage, function(response) {
+					if (response.error === undefined) {
+						if (response.data.length >= 1) {
+							this.newerPage = response.paging.previous;
+							this.olderPage = response.paging.next;
+							this.feed = response.data;
+						}
+					}
+				}, function() {
+					// ERROR HANDLING
+				}, function() {
+					this.newer();
+				});
+				// ...
+				$(document).ready(function() {
+					$(this.$.column).on('scroll', function() {
+						this.older();
+					}.bind(this));
+				}.bind(this));
+			},
+			/**
+			 * [basePage description]
+			 * @type {String}
+			 */
+			basePage: '',
+			/**
+			 * [olderPage description]
+			 * @type {String}
+			 */
+			olderPage: '',
+			/**
+			 * [newerPage description]
+			 * @type {String}
+			 */
+			newerPage: '',
+			/**
+			 * [newer description]
+			 */
+			newer: function() {
+				this.request(this.newerPage, done=function(response) {
+					if (response.data.length >= 1) {
+						this.newerPage = response.paging.previous;
+						this.feed = response.data.concat(this.feed);
+					}
+				}, error=function() {
+					// ERROR HANDLING.
+				}, always=function() {
+					// Attempt to update Instagram every 30 seconds.
+					setTimeout(function() {
+						this.newer();
+					}.bind(this), 30000);
+				});
+			},
+			/**
+			 * [older description]
+			 */
+			older: function() {
+				var scrollHeight = $(this.$.column)[0].scrollHeight;
+				var scrollPos = $(this.$.column).scrollTop();
+				if (scrollHeight - scrollPos <= 2000) {
+					this.request(this.olderPage, done=function(response) {
+						if (response.data.length >= 1) {
+							this.olderPage = response.paging.next;
+							this.feed = this.feed.concat(response.data);
+						}
+					}, error=function() {
+						// ERROR HANDLING.
+					});	
+				}
+			},
+			/**
+			 * [request description]
+			 * @param  {String}   url    [description]
+			 * @param  {Function} done   [description]
+			 * @param  {Function} error  [description]
+			 * @param  {Function} always [OPTIONAL. ]
+			 */
+			request: function(url, done, error, always) {
+				// Only run if no other requests are running.
+				if (this.loading === false) {
+					// Prevent other requests from running.
+					this.loading = true;
+					// Send AJAX request.
+					$.ajax({
+						type: 'GET',
+						dataType: 'jsonp',
+						url: url,
+						context: this // Set scope of callback functions.
+					}).done(function(response) {
+						// FOR TESTING PURPOSES ONLY.
+						console.log(response);
+						// Run success callback. Set scope.
+						done.call(this, response);
+					}).fail(function(xhr, status, text) {
+						// Run error callback. Set scope.
+						error.call(this, xhr, status, text);
+					}).always(function() {
+						// Loading has finished, whether there was an error or not.
+						// Allow additional requests to run in the always callback (if the parameter was passed).
+						this.loading = false;
+						if (always !== undefined) {
+							always.call(this);
+						}
+					});
+				}
+			},
+			/**
+			 * [loading description]
+			 * @type {Boolean}
+			 */
+			loading: false
+		});
+	</script>
+</polymer-element>
