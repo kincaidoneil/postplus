@@ -3,7 +3,6 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var gulp = require('gulp');
-var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var vulcanize = require('gulp-vulcanize');
 var clean = require('gulp-rimraf');
@@ -13,6 +12,7 @@ var flatten = require('gulp-flatten');
 var browserSync = require('browser-sync');
 var tinylr = require('tiny-lr');
 var replace = require('gulp-replace');
+var stylus = require('gulp-stylus');
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // BUILD TASKS
@@ -23,7 +23,7 @@ gulp.task('build', function() {
 	runSeq(
 		// Delete dist to allow for nice, clean files!
 		'clean',
-		// Compile SASS; minify resulting CSS files.
+		// Compile Stylus; minify resulting CSS files.
 		'styles',
 		// Concat Polymer components into one file. Export scripts to index.js.
 		'vulcanize',
@@ -43,8 +43,8 @@ gulp.task('clean', function() {
 });
 
 gulp.task('styles', function() {
-	return gulp.src('app/components/**/*.scss', {base: 'app/components'}) // Set base to 'app/components' so each file goes into the same directory it started.
-		.pipe(sass()) // Compile SASS into CSS.
+	return gulp.src('app/components/**/*.styl', {base: 'app/components'}) // Set base to 'app/components' so each file goes into the same directory it started.
+		.pipe(stylus()) // Compile Stylus into CSS.
 		.pipe(minifyCSS({ // Minify it, remove comments, etc.
 			keepSpecialComments: 0,
 			keepBreaks: false,
@@ -120,10 +120,10 @@ gulp.task('chrome', function() {
 	var lr = tinylr();
 	lr.listen(35729);
 	
-	// Watch SASS for changes to compile them.
-	gulp.watch('app/components/**/*.scss', function(event) {
+	// Watch Stylus for changes to compile them.
+	gulp.watch('app/components/**/*.styl', function(event) {
 		return gulp.src(event.path, {base: 'app/components'}) // Set base to 'app/components' so each file goes into the same directory it started.
-			.pipe(sass()) // Compile SASS into CSS.
+			.pipe(stylus()) // Compile Stylus into CSS.
 			.pipe(gulp.dest('app/components'));
 	});
 	
@@ -173,10 +173,10 @@ gulp.task('server', function() {
 		logConnections: true // Log all devices that are connected.
 	});
 	
-	// Watch SASS for changes to compile them.
-	gulp.watch('app/components/**/*.scss', function(event) {
+	// Watch Stylus for changes to compile them.
+	gulp.watch('app/components/**/*.styl', function(event) {
 		return gulp.src(event.path, {base: 'app/components'}) // Set base to 'app/components' so each file goes into the same directory it started.
-			.pipe(sass()) // Compile SASS into CSS.
+			.pipe(stylus()) // Compile Stylus into CSS.
 			.pipe(gulp.dest('app/components/'));
 	});
 	
