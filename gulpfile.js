@@ -95,9 +95,9 @@ gulp.task('manifest', function() {
 
 gulp.task('fonts', function() {
 	// Copy fonts to the dist/fonts directory.
-	return gulp.src('app/components/**/fonts/*.ttf')
-		.pipe(flatten())
-		.pipe(gulp.dest('test/fonts'))
+	return gulp.src('app/components/people-app/fonts/**/*.ttf', {
+			base: 'app/components/people-app/fonts' // Set base so each file goes into the same directory it started (e.g., /Roboto, /Montserrat).
+		}).pipe(gulp.dest('test/fonts'))
 		.pipe(gulp.dest('dist/fonts'));
 });
 
