@@ -1,7 +1,7 @@
 {
   "name": "people",
   "version": "0.2.0",
-  "description": "People+ aggregates posts from all your social networks (Facebook, Twitter, and Instagram) into one unified & simplified interface. See all your friends' posts in one place, and master your social life.",
+  "description": "A beautiful social media aggregate.",
   "main": "index.html",
   "keywords": [
     "facebook",
@@ -12,12 +12,12 @@
   "devDependencies": {
     "gulp": "3.8.6",
     "gulp-minify-css": "0.3.6",
-    "gulp-vulcanize": "0.2.1",
+    "gulp-vulcanize": "1.0.0",
     "gulp-rimraf": "0.1.0",
     "run-sequence": "0.3.6",
     "gulp-cleanhtml": "0.0.2",
     "gulp-flatten": "0.0.2",
-    "browser-sync": "1.3.0",
+    "browser-sync": "1.3.2",
     "tiny-lr": "0.0.5",
     "gulp-replace": "0.4.0",
     "gulp-stylus": "1.3.0"
