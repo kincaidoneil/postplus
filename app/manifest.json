@@ -19,6 +19,7 @@
 		"https://*.fbcdn.net/",
 		/* For OAuth redirects. */
 		"https://*.chromiumapp.org/",
+		/* Miscellaneous */
 		"storage",
 		"notifications",
 		"webview"
