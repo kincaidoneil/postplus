@@ -15,31 +15,30 @@ var replace = require('gulp-replace');
 var stylus = require('gulp-stylus');
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// BUILD TASKS
+// DEFAULT FOR 'gulp' COMMAND
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// Prepare the dist directory for production; ready test to run LiveReload.
-gulp.task('build', function() {
+gulp.task('default', function() {
 	runSeq(
-		// Delete dist to allow for nice, clean files!
 		'clean',
-		// Compile Stylus; minify resulting CSS files.
 		'styles',
-		// Concat Polymer components into one file. Export scripts to index.js.
-		'vulcanize',
-		// Minify HTML and remove comments returned from vulcanize.
-		'html',
-		// Copy other miscellaneous assets.
-		'livereload',
-		'manifest',
-		'fonts',
-		'images'
+		'copy',
+		// For some reason, vulcanize doesn't work properly when it runs in parallel, so run them synchronously.
+		'build-vulcanize',
+		'dist-vulcanize',
+		['dist-html', 'dist-clean']
 	);
 });
 
 gulp.task('clean', function() {
-	return gulp.src(['dist', 'test'], {read: false})
-		.pipe(clean()); // Delete dist and test to allow for nice, clean files!
+	return gulp.src(['dist', 'build'], {read: false})
+		.pipe(clean()); // Delete dist and build to allow for nice, clean files!
+});
+
+gulp.task('copy', function() {
+	return gulp.src('app/**')
+		.pipe(gulp.dest('build'))
+		.pipe(gulp.dest('dist'));
 });
 
 gulp.task('styles', function() {
@@ -53,61 +52,63 @@ gulp.task('styles', function() {
 		.pipe(gulp.dest('app/components'));
 });
 
-gulp.task('vulcanize', function() {
-	return gulp.src('app/index.html')
-		// Concatenate Polymer web components into a single file.
-		.pipe(vulcanize({
-			dest: 'dist', // Required. Somehow it exports index.js to both dist and test, though.
-			inline: true, // Make sure styles are inline; make sure external scripts get exported to index.js.
-			csp: true // Make sure inline scripts get exported to index.js to be in accordance with CSP.
-		}))
-		.pipe(gulp.dest('dist'))
-		// Embed the LiveReload middleware (after scripts have been exported to index.js and before comments are deleted).
-		.pipe(replace(
-			'<!-- Insert middleware here. -->',
-			'<script src="livereload.js?host=localhost&port=35729"><\/script>'
-		))
-		.pipe(gulp.dest('test'));
-});
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// BUILD TASKS
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-gulp.task('html', function() {
-	return gulp.src('dist/index.html')
-		// Minify and remove comments from HTML (purely for dist).
-		.pipe(htmlMin({
-			collapseWhitespace: true,
-			removeComments: true
-		}))
-		.pipe(gulp.dest('dist'));
-});
+	gulp.task('build-vulcanize', function() {
+		return gulp.src('build/index.html')
+			// Concatenate Polymer web components into a single file (build).
+			.pipe(vulcanize({
+				dest: 'build',
+				// Make sure inline (and external) scripts get exported to index.js to be in accordance with CSP; styles are inlined.
+				inline: true,
+				csp: true
+			}))
+			// Embed the LiveReload middleware (after scripts have been exported to index.js).
+			.pipe(replace(
+				'<!-- inject:middleware -->',
+				'<script src="bower_components/chrome-app-livereload/livereload.js?host=localhost&port=35729"><\/script>'
+			))
+			.pipe(gulp.dest('build'));
+	});
 
-gulp.task('livereload', function() {
-	// Copy LiveReload middleware script to test.
-	return gulp.src('app/bower_components/chrome-app-livereload/livereload.js')
-		.pipe(gulp.dest('test'));
-});
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// DIST TASKS
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-gulp.task('manifest', function() {
-	// Copy Chrome App manifest and background.js to dist and test directories.
-	return gulp.src(['app/manifest.json', 'app/background.js'])
-		.pipe(gulp.dest('test'))
-		.pipe(gulp.dest('dist'));
-});
-
-gulp.task('fonts', function() {
-	// Copy fonts to the dist/fonts directory.
-	return gulp.src('app/components/people-app/fonts/**/*.ttf', {
-			base: 'app/components/people-app/fonts' // Set base so each file goes into the same directory it started (e.g., /Roboto, /Montserrat).
-		}).pipe(gulp.dest('test/fonts'))
-		.pipe(gulp.dest('dist/fonts'));
-});
-
-gulp.task('images', function() {
-	// Copy images to the dist/images directory.
-	return gulp.src('app/components/**/images/*.png')
-		.pipe(flatten())
-		.pipe(gulp.dest('test/images'))
-		.pipe(gulp.dest('dist/images'));
-});
+	gulp.task('dist-vulcanize', function() {
+		return gulp.src('dist/index.html')
+			// Concatenate Polymer web components into a single file (dist).
+			.pipe(vulcanize({
+				dest: 'dist',
+				// Make sure inline (and external) scripts get exported to index.js to be in accordance with CSP; styles are inlined.
+				inline: true,
+				csp: true,
+				// Minify; remove comments.
+				strip: true
+			}))
+			.pipe(gulp.dest('dist'));
+	});
+	
+	gulp.task('dist-html', function() {
+		// Minify and remove comments from HTML (purely for dist; sometimes 'strip' doesn't work right).
+		return gulp.src('dist/index.html')	
+			.pipe(htmlMin({
+				collapseWhitespace: true,
+				removeComments: true
+			}))
+	});
+	
+	gulp.task('dist-clean', function() {
+		return gulp.src([
+			// Remove bower components (already vulcanized into index.html and index.js).
+			'dist/bower_components',
+			// Delete unnecessary component files so only assets (images and fonts) remain.
+			'dist/components/**/*.{html,css,styl,js}',
+		], {read: false})
+			.pipe(clean());
+	});
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // CHROME TASKS
@@ -124,32 +125,33 @@ gulp.task('chrome', function() {
 	gulp.watch('app/components/**/*.styl', function(event) {
 		return gulp.src(event.path, {base: 'app/components'}) // Set base to 'app/components' so each file goes into the same directory it started.
 			.pipe(stylus()) // Compile Stylus into CSS.
-			.pipe(gulp.dest('app/components'));
+			.pipe(gulp.dest('app/components/'));
 	});
 	
-	// When any files are updated, re-vulcanize index.html.
-	gulp.watch('app/**/*.{html,css,js}', function(event) {
-		return gulp.src('app/index.html')
-			// Concatenate Polymer web components into a single file.
-			.pipe(vulcanize({
-				dest: 'test',
-				inline: true, // Make sure styles are inline; make sure external scripts get exported to index.js.
-				csp: true // Make sure inline scripts get exported to index.js to be in accordance with CSP.
-			}))
-			// Embed the LiveReload middleware (after scripts have been exported to index.js).
-			.pipe(replace(
-				'<!-- Insert middleware here. -->',
-				'<script src="livereload.js?host=localhost&port=35729"><\/script>'
-			))
-			.pipe(gulp.dest('test'));
+	// When any source files are modified, copy them to build/.
+	gulp.watch('app/components/**/*.{html,css,js}', function(event) {
+		return gulp.src(event.path, {base: 'app'})
+			.pipe(gulp.dest('build'));
 	});
 	
-	// Watch index.html to reload the Chrome app.
-	gulp.watch('test/index.html', function(event) {
+	// When any build files are updated, re-vulcanize index.html.
+	gulp.watch('build/components/**/*.{html,css,js}', function(event) {
+		gulp.task('chrome-copy', function() {
+			return gulp.src('app/index.html')
+				.pipe(gulp.dest('build'));
+		});
+		runSeq(
+			// 1) Copy index.html from app/ so the pre-vulcanized index.html is not being vulcanized again.
+			'chrome-copy',
+			// 2) Vulcanize; add LiveReload script.
+			'build-vulcanize'
+		);
+	});
+	
+	// Reload the Chrome app when index.html is updated (following vulcanization).
+	gulp.watch('build/index.html', function(event) {
 		return lr.changed({
-			body: {
-				files: [event.path]
-			}
+			body: {files: [event.path]}
 		});
 	});
 	
@@ -181,9 +183,9 @@ gulp.task('server', function() {
 	});
 	
 	// Watch all files for changes to reload them.
-	gulp.watch('app/**', function(event) {
-		return gulp.src('app/**/*.{html,css,js,png}')
-			.pipe(browserSync.reload({stream: true}));
+	gulp.watch(['app/components/**/*.{html,js,css}', 'app/index.html'], function(event) {
+		return gulp.src(event.path)
+			.pipe(browserSync.reload({stream: true, once: true})); // Reload the entire page; injecting (even just CSS) doesn't seem work. F*cking web components.
 	});
 	
 });
