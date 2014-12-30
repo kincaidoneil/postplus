@@ -1,0 +1,256 @@
+@import '../people-app/global'
+
+:host
+	width: 100%
+	height: 100%
+
+// ACCOUNTS PANE
+
+#accountsPane
+	width: 400px
+	height: 100%
+	float: left
+	box-sizing: border-box
+	background: grayBase
+	// For build-in animation.
+	position: relative
+	z-index: 5
+	left: -400px
+	
+	core-animated-pages
+		width: 100%
+		height: 100%
+	
+		// ACCOUNTS PAGE (when authorization is not in progress)
+		
+		#accountsPg
+			width: 100%
+			height: 100%
+			position: relative
+			
+			// TAB CONTAINER ('Add Account' and 'Added' tabs)
+			
+			#tabContainer
+				width: 100%
+				float: left
+			
+				#tabs
+					width: 100%
+					height: 50px
+					background: pinkAccent
+				
+					paper-tab
+						font-family: "Roboto"
+						font-weight: bold
+						font-size: 14px
+						color: white
+						text-transform: uppercase
+						cursor: pointer
+			
+			// LOGIN CONTAINER ('Add Account' content)
+			
+			#loginContainer
+				width: 100%
+				padding: 30px
+				box-sizing: border-box
+				float: left
+				
+				.loginButton
+					width: 100%
+					height: 60px
+					margin: 0 0 30px 0
+					padding: 6px
+					float: left
+					box-sizing: border-box
+					text-align: left
+					color: white
+					text-transform: uppercase
+					line-height: 48px
+					font-family: "Montserrat"
+					font-size: 15px
+					cursor: pointer
+					border-radius: 2px
+					/* For build-in animation. */
+					position: relative
+					left: -400px
+					opacity: 0
+				
+				.icon
+					width: 48px
+					height: 48px
+					margin-left: 45px
+					margin-right: 20px
+					float: left
+			
+			// ACCOUNTS CONTAINER ('Added' content)
+			
+			#accountsContainer
+				width: 100%
+				padding: 30px
+				box-sizing: border-box
+				float: left;
+				text-align: center
+				font-family: "Roboto"
+				font-size: 14px
+				color: dimgray
+				
+				.accountTile
+					width: 100%
+					height: 60px
+					margin: 0 0 30px 0
+					padding: 10px
+					box-sizing: border-box
+					float: left
+					text-align: left
+					border-radius: 2px
+					
+					core-icon
+						width: 40px
+						height: 40px
+						margin: 0 10px 0 0
+						float: left
+					
+					#fullNameContainer
+						width: calc(100% - 90px)
+						height: 20px
+						float: left
+						font-family: "Roboto"
+						font-size: 14px
+						color: dimgray
+						
+					#usernameContainer
+						width: calc(100% - 90px)
+						height: 20px
+						float: left
+						
+					.removeButton
+						position: relative
+						right: 0
+						top: 0
+						color: gray
+		
+			#finishButton
+				width: 100px
+				position: absolute
+				right: 30px
+				bottom: 30px
+				font-family: "Roboto"
+				font-weight: bold
+				font-size: 14px
+				color: white
+				background: pinkAccent
+		
+		// LOADING PAGE (when authorization is in progress)
+		
+		#loadingPg
+			width: 100%
+			height: 100%
+			
+			#loadingContainer
+				width: 100%
+				height: 100%
+				// Vertically & horizontally center-align content using flexbox
+				display: flex
+				flex-direction: column
+				justify-content: center
+				align-items: center
+			
+				#setupProgress
+					width: 56px
+					height: 56px
+				
+				#setupProgress::shadow .circle
+					border-width: 6px
+					border-color: pinkAccent
+					
+				#cancelButton
+					width: 100px
+					position: absolute
+					left: 30px
+					bottom: 30px
+					font-family: "Roboto"
+					font-weight: bold
+					font-size: 14px
+					color: #212121
+					
+				#cancelButton::shadow #ripple
+					color: #CFCFCF
+	
+	// TOASTS
+	
+	paper-toast
+		left: 30px
+		bottom: 100px
+		font-family: Roboto
+		font-size: 14px
+		
+		div
+			font-weight: bold
+			color: pinkAccent
+	
+	#successToast
+		border-radius: 24px
+	
+// INTRO PANE
+
+#introPane
+	width: 100%
+	height: 100%
+	padding-left: 400px
+	box-sizing: border-box
+	background: navyBase
+	// For build-in animation.
+	opacity: 0
+	
+	core-animated-pages
+		width: 100%
+		height: 100%
+		position: relative
+	
+		#introContainer
+			width: 720px
+			height: 100%
+			margin: auto
+			// Vertically & horizontally center-align content using flexbox
+			display: flex
+			flex-direction: column
+			justify-content: center
+			align-items: center
+		
+			h1
+				margin: -40px 0 0 0
+				text-align: center
+				font-size: 84px
+				font-family: "Montserrat"
+				font-weight: bold
+				color: pinkAccent
+							
+			img
+				width: 48px
+				height: 48px
+				margin: 0 30px 0 0
+				border: 8px solid white
+				background: white
+			
+			h3
+				text-align: left
+				font-size: 20px
+				font-family: "Roboto Light"
+				font-weight: normal
+				color: white
+			
+			video
+				width: 720px
+				height: 480px
+				margin-top: 20px
+				background: white
+	
+		#webAuthContainer
+			width: 100%
+			height: 100%
+		
+			#webAuth
+				width: 100%
+				height: 100%
+				margin: 0
+				padding: 0
