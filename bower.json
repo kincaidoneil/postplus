@@ -2,12 +2,12 @@
   "name": "people",
   "version": "0.2.0",
   "dependencies": {
-  	"jquery": "jquery#2.1.0",
-    "polymer": "Polymer/polymer#0.3.4",
-    "core-elements": "Polymer/core-elements#0.3.4",
-    "paper-elements": "Polymer/paper-elements#0.3.4",
-    "CryptoJS": "sytelus/CryptoJS#3.1.2",
-    "chrome-app-livereload": "bestander/chrome-app-livereload#0.0.5",
-    "velocity": "julianshapiro/velocity#0.11.9"
+    "jquery": "jquery#~2.1.3",
+    "polymer": "Polymer/polymer#~0.5.2",
+    "core-elements": "Polymer/core-elements#~0.5.2",
+    "paper-elements": "Polymer/paper-elements#~0.5.2",
+    "CryptoJS": "sytelus/CryptoJS#~3.1.2",
+    "chrome-app-livereload": "bestander/chrome-app-livereload#~0.0.5",
+    "velocity": "julianshapiro/velocity#~1.1.0"
   }
 }
