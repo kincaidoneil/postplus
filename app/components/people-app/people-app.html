@@ -4,7 +4,7 @@
 <!-- Core and Paper Elements -->
 <link rel="import" href="../../bower_components/core-elements/core-elements.html">
 <link rel="import" href="../../bower_components/paper-elements/paper-elements.html">
-<link rel="import" href="../../bower_components/core-icons/iconsets/social-icons.html">
+<link rel="import" href="../../bower_components/core-icons/social-icons.html">
 <!-- Components -->
 <link rel="import" href="../fb-card/fb-card.html">
 <link rel="import" href="../fb-column/fb-column.html">
@@ -15,23 +15,43 @@
 <link rel="import" href="../people-img/people-img.html">
 <link rel="import" href="../people-login/people-login.html">
 <link rel="import" href="../people-time/people-time.html">
-<!-- jQuery -->
+<link rel="import" href="../twitter-api/twitter-api.html">
+<!-- jQuery & Velocity.js -->
 <script type="text/javascript" src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="../../bower_components/velocity/velocity.min.js"></script>
 <!-- STYLES -->
-<link rel="stylesheet" type="text/css" href="people-app.css">
+<style type="text/css">
+	body, html {
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		-webkit-user-select: none;
+	}
+</style>
 <polymer-element name="people-app">
 	<template>
 		<!-- MARKUP -->
-		<!-- <people-dash></people-dash> -->
-		<people-login></people-login>
+		<!-- <core-pages selected="{{selected}}"> -->
+			<people-login defaultTab="0"></people-login>
+			<!-- <people-dash></people-dash> -->
+		<!-- </core-pages> -->
 	</template>
 	<!-- SCRIPTS -->
 	<script type="text/javascript">
 		Polymer('people-app', {
+			selected: 0,
 			ready: function() {
-				
-				// WRITE SOME CODE HERE.
-				
+				chrome.storage.sync.get('accounts', function(accounts) {
+					// If no accounts exist, navigate to the login page. Otherwise, navigate to dash.
+					if ($.isEmptyObject(accounts)) {
+						// Navigate to login.
+						this.selected = 1;
+					} else {
+						// Navigate to dash.
+						this.selected = 2;
+					}
+				}.bind(this));
 			}
 		});
 	</script>
