@@ -25,9 +25,9 @@
 		"webview"
 	],
 	"icons": {
-		"16": "components/people-app/images/people-16.png",
-		"32": "components/people-app/images/people-32.png",
-		"48": "components/people-app/images/people-48.png",
-		"128": "components/people-app/images/people-128.png"
+		"16": "components/people-app/images/postplus-logo-16-white.png",
+		"32": "components/people-app/images/postplus-logo-32-white.png",
+		"48": "components/people-app/images/postplus-logo-48-white.png",
+		"128": "components/people-app/images/postplus-logo-128-white.png"
 	}
 }
