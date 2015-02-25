@@ -2,113 +2,92 @@
 // INCLUDE GULP & PLUGINS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var gulp = require('gulp');
-var minifyCSS = require('gulp-minify-css');
-var vulcanize = require('gulp-vulcanize');
-var clean = require('gulp-rimraf');
-var runSeq = require('run-sequence');
-var htmlMin = require('gulp-cleanhtml');
-var flatten = require('gulp-flatten');
 var browserSync = require('browser-sync');
-var tinylr = require('tiny-lr');
-var replace = require('gulp-replace');
+var csso = require('gulp-csso');
+var del = require('del');
+var gulp = require('gulp');
+var minifyHTML = require('gulp-minify-html');
 var stylus = require('gulp-stylus');
+var tinylr = require('tiny-lr');
+var vulcanize = require('gulp-vulcanize');
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// DEFAULT FOR 'gulp' COMMAND
+// DEFAULT TASKS
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-gulp.task('default', function() {
-	runSeq(
-		'clean',
-		'styles',
-		'copy',
-		// For some reason, vulcanize doesn't work properly when it runs in parallel, so run them synchronously.
-		'build-vulcanize',
-		'dist-vulcanize',
-		['dist-html', 'dist-clean']
-	);
+// Delete dist and build to allow for nice, clean files!
+gulp.task('clean', function(callback) {
+	return del(['build', 'dist'], callback);
 });
 
-gulp.task('clean', function() {
-	return gulp.src(['dist', 'build'], {read: false})
-		.pipe(clean()); // Delete dist and build to allow for nice, clean files!
+// Compile Stylus into CSS; minify it.
+gulp.task('styles', function() {
+	// Set base to 'app/components' so each file goes into the same directory it started.
+	return gulp.src('app/components/**/*.styl', {base: 'app/components'})
+		.pipe(stylus())
+		.pipe(csso())
+		.pipe(gulp.dest('app/components'));
 });
 
+// Copy all files; cache them.
 gulp.task('copy', function() {
 	return gulp.src('app/**')
 		.pipe(gulp.dest('build'))
 		.pipe(gulp.dest('dist'));
 });
 
-gulp.task('styles', function() {
-	return gulp.src('app/components/**/*.styl', {base: 'app/components'}) // Set base to 'app/components' so each file goes into the same directory it started.
-		.pipe(stylus()) // Compile Stylus into CSS.
-		.pipe(minifyCSS({ // Minify it, remove comments, etc.
-			keepSpecialComments: 0,
-			keepBreaks: false,
-			removeEmpty: true
+gulp.task('build:vulcanize', function() {
+	return gulp.src('build/index.html')
+		// Concatenate Polymer web components into a single file (build).
+		.pipe(vulcanize({
+			dest: 'build',
+			// Make sure inline (and external) scripts get exported to index.js to be in accordance with CSP; styles are inlined.
+			inline: true,
+			csp: true,
+			// Don't vulcanize LiveReload script, but keep it in the output.
+			strip_excludes: false,
+			excludes: {
+				scripts: ['livereload.js']
+			}
 		}))
-		.pipe(gulp.dest('app/components'));
+		.pipe(gulp.dest('build'));
 });
 
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// BUILD TASKS
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+gulp.task('dist:vulcanize', function() {
+	return gulp.src('dist/index.html')
+		// Concatenate Polymer web components into a single file (dist).
+		.pipe(vulcanize({
+			dest: 'dist',
+			// Make sure inline (and external) scripts get exported to index.js to be in accordance with CSP; styles are inlined.
+			inline: true,
+			csp: true,
+			// Minify; remove comments.
+			strip: true,
+			// Strip LiveReload script from the output.
+			strip_excludes: true,
+			excludes: {
+				scripts: ['livereload.js']
+			}
+		}))
+		.pipe(gulp.dest('dist'));
+});
 
-	gulp.task('build-vulcanize', function() {
-		return gulp.src('build/index.html')
-			// Concatenate Polymer web components into a single file (build).
-			.pipe(vulcanize({
-				dest: 'build',
-				// Make sure inline (and external) scripts get exported to index.js to be in accordance with CSP; styles are inlined.
-				inline: true,
-				csp: true
-			}))
-			// Embed the LiveReload middleware (after scripts have been exported to index.js).
-			.pipe(replace(
-				'<!-- inject:middleware -->',
-				'<script src="bower_components/chrome-app-livereload/livereload.js?host=localhost&port=35729"><\/script>'
-			))
-			.pipe(gulp.dest('build'));
-	});
+gulp.task('dist:html', function() {
+	// Minify and remove comments from HTML (purely for dist; sometimes 'strip' doesn't work right).
+	return gulp.src('dist/index.html')	
+		.pipe(minifyHTML({
+			comments: true
+		}))
+});
 
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// DIST TASKS
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-	gulp.task('dist-vulcanize', function() {
-		return gulp.src('dist/index.html')
-			// Concatenate Polymer web components into a single file (dist).
-			.pipe(vulcanize({
-				dest: 'dist',
-				// Make sure inline (and external) scripts get exported to index.js to be in accordance with CSP; styles are inlined.
-				inline: true,
-				csp: true,
-				// Minify; remove comments.
-				strip: true
-			}))
-			.pipe(gulp.dest('dist'));
-	});
-	
-	gulp.task('dist-html', function() {
-		// Minify and remove comments from HTML (purely for dist; sometimes 'strip' doesn't work right).
-		return gulp.src('dist/index.html')	
-			.pipe(htmlMin({
-				collapseWhitespace: true,
-				removeComments: true
-			}))
-	});
-	
-	gulp.task('dist-clean', function() {
-		return gulp.src([
-			// Remove bower components (already vulcanized into index.html and index.js).
-			'dist/bower_components',
-			// Delete unnecessary component files so only assets (images and fonts) remain.
-			'dist/components/**/*.{html,css,styl,js}',
-		], {read: false})
-			.pipe(clean());
-	});
+gulp.task('dist:clean', function(callback) {
+	return del([
+		// Remove bower components (already vulcanized into index.html and index.js).
+		'dist/bower_components',
+		// Delete unnecessary component files so only assets (images and fonts) remain.
+		'dist/components/**/*.{html,css,styl,js}'
+	], callback);
+});
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // CHROME TASKS
@@ -122,39 +101,39 @@ gulp.task('chrome', function() {
 	lr.listen(35729);
 	
 	// Watch Stylus for changes to compile them.
-	gulp.watch('app/components/**/*.styl', function(event) {
-		return gulp.src(event.path, {base: 'app/components'}) // Set base to 'app/components' so each file goes into the same directory it started.
-			.pipe(stylus()) // Compile Stylus into CSS.
+	gulp.watch('app/components/**/*.styl').on('change', function(event) {
+		// Set base to 'app/components' so each file goes into the same directory it started.
+		return gulp.src(event.path, {base: 'app/components'})
+			.pipe(stylus())
 			.pipe(gulp.dest('app/components/'));
 	});
 	
 	// When any source files are modified, copy them to build/.
-	gulp.watch('app/components/**/*.{html,css,js}', function(event) {
+	gulp.watch('app/components/**/*.{html,css,js}').on('change', function(event) {
 		return gulp.src(event.path, {base: 'app'})
 			.pipe(gulp.dest('build'));
 	});
 	
 	// When any build files are updated, re-vulcanize index.html.
-	gulp.watch('build/components/**/*.{html,css,js}', function(event) {
-		gulp.task('chrome-copy', function() {
-			return gulp.src('app/index.html')
-				.pipe(gulp.dest('build'));
-		});
-		runSeq(
-			// 1) Copy index.html from app/ so the pre-vulcanized index.html is not being vulcanized again.
-			'chrome-copy',
-			// 2) Vulcanize; add LiveReload script.
-			'build-vulcanize'
-		);
-	});
+	// Copy index.html from app/ first so index.html in build/ won't be vulcanized twice.
+	gulp.watch('build/components/**/*.{html,css,js}').on('change', gulp.series(
+		'chrome:copy',
+		'build:vulcanize'
+	));
 	
 	// Reload the Chrome app when index.html is updated (following vulcanization).
-	gulp.watch('build/index.html', function(event) {
+	gulp.watch('build/index.html').on('change', function(event) {
+		console.log('Reloading LiveReload...');
 		return lr.changed({
 			body: {files: [event.path]}
 		});
 	});
 	
+});
+
+gulp.task('chrome:copy', function() {
+	return gulp.src('app/index.html')
+		.pipe(gulp.dest('build'))
 });
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -176,16 +155,30 @@ gulp.task('server', function() {
 	});
 	
 	// Watch Stylus for changes to compile them.
-	gulp.watch('app/components/**/*.styl', function(event) {
-		return gulp.src(event.path, {base: 'app/components'}) // Set base to 'app/components' so each file goes into the same directory it started.
-			.pipe(stylus()) // Compile Stylus into CSS.
+	gulp.watch('app/components/**/*.styl').on('change', function(event) {
+		// Set base to 'app/components' so each file goes into the same directory it started.
+		return gulp.src(event.path, {base: 'app/components'})
+			.pipe(stylus())
 			.pipe(gulp.dest('app/components/'));
 	});
 	
 	// Watch all files for changes to reload them.
-	gulp.watch(['app/components/**/*.{html,js,css}', 'app/index.html'], function(event) {
+	gulp.watch(['app/components/**/*.{html,js,css}', 'app/index.html']).on('change', function(event) {
+		// Reload the entire page; injecting (even just CSS) doesn't seem work. F*cking web components.
 		return gulp.src(event.path)
-			.pipe(browserSync.reload({stream: true, once: true})); // Reload the entire page; injecting (even just CSS) doesn't seem work. F*cking web components.
+			.pipe(browserSync.reload({stream: true, once: true}));
 	});
 	
 });
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// DEFAULT FOR 'gulp' COMMAND
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+gulp.task('default', gulp.series(
+	'clean',
+	'styles',
+	'copy',
+	gulp.parallel('build:vulcanize', 'dist:vulcanize'),
+	gulp.parallel('dist:html', 'dist:clean')
+));
