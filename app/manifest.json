@@ -1,5 +1,5 @@
 {
-	"name": "People+",
+	"name": "Post+",
 	"author": "Kincaid O'Neil",
 	"description": "The People+ app for Chrome aggregates posts from all your social networks (Facebook, Twitter, and Instagram) into one unified & simplified interface. See all your friends' posts in one place, and master you social life.",
 	"version": "0.2",
@@ -25,9 +25,9 @@
 		"webview"
 	],
 	"icons": {
-		"16": "components/people-app/images/postplus-logo-16-white.png",
-		"32": "components/people-app/images/postplus-logo-32-white.png",
-		"48": "components/people-app/images/postplus-logo-48-white.png",
-		"128": "components/people-app/images/postplus-logo-128-white.png"
+		"16": "components/plus-app/images/postplus-logo-16-white.png",
+		"32": "components/plus-app/images/postplus-logo-32-white.png",
+		"48": "components/plus-app/images/postplus-logo-48-white.png",
+		"128": "components/plus-app/images/postplus-logo-128-white.png"
 	}
 }
