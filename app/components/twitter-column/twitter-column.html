@@ -1,0 +1,31 @@
+!-- POLYMER -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<polymer-element name="twitter-column" attributes="accessToken">
+	<template>
+		<!-- STYLES -->
+		<link rel="stylesheet" type="text/css" href="../plus-column/plus-column.css">
+		<!-- MARKUP -->
+		<div id="columnContainer">
+			<div id="columnTopContainer">
+				<div id="columnTop" style="background: #00ACED">
+					<core-icon icon="social:post-facebook" size="20"></core-icon>
+					<div id="columnLabel">Twitter</div>
+				</div>
+				<!-- <paper-shadow id="columnShadow" z="2"></paper-shadow> -->
+			</div>
+			<div id="column">
+				<template repeat="{{post in feed}}">
+					<fb-card post="{{post}}" accessToken="{{accessToken}}"></fb-card>
+				</template>
+			</div>
+		</div>
+	</template>
+	<!-- SCRIPTS -->
+	<script type="text/javascript">
+		Polymer('twitter-column', {
+			ready: function() {
+				// Hello, world.
+			}
+		});
+	</script>
+</polymer-element>

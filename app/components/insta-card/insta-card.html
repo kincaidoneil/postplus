@@ -3,11 +3,11 @@
 <polymer-element name="insta-card" attributes="post">
 	<template>
 		<!-- STYLES -->
-		<link rel="stylesheet" type="text/css" href="../people-card/people-card.css">
+		<link rel="stylesheet" type="text/css" href="../plus-card/plus-card.css">
 		<!-- MARKUP -->
 		<div id="card">
 			<div id="smTopPane">
-				<people-img id="smStatusPic" src="{{post.user.profile_picture}}"></people-img>
+				<plus-img id="smStatusPic" src="{{post.user.profile_picture}}"></plus-img>
 			</div>
 			<div id="smBottomPane">
 				<div id="smDetails">
@@ -18,7 +18,7 @@
 						@{{post.user.username}}
 					</span>
 					<span id="smTimestamp">
-						<people-time timestamp="{{post.created_time}}" service="Instagram"></people-time>
+						<plus-time timestamp="{{post.created_time}}" service="Instagram"></plus-time>
 					</span>
 				</div>
 				<!-- <div id="smPostStats">
@@ -32,7 +32,7 @@
 					</template>
 				</div> -->
 				<template if="{{post.type === 'image'}}">
-					<people-img id="smInstaPic" src="{{post.images.standard_resolution.url}}"></fb-img>
+					<plus-img id="smInstaPic" src="{{post.images.standard_resolution.url}}"></plus-img>
 				</template>
 				<template if="{{post.type === 'video'}}">
 					<video id="smInstaVideo" controls src="{{post.videos.standard_resolution.url}}"></video>

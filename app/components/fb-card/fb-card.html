@@ -3,11 +3,11 @@
 <polymer-element name="fb-card" attributes="post accessToken">
 	<template>
 		<!-- STYLES -->
-		<link rel="stylesheet" type="text/css" href="../people-card/people-card.css">
+		<link rel="stylesheet" type="text/css" href="../plus-card/plus-card.css">
 		<!-- MARKUP -->
 		<div id="card">
 			<div id="smTopPane">
-				<people-img id="smStatusPic" src="{{'https://graph.facebook.com/' + post.from.id + '/picture?type=square'}}"></people-img>
+				<plus-img id="smStatusPic" src="{{'https://graph.facebook.com/' + post.from.id + '/picture?type=square'}}"></plus-img>
 			</div>
 			<div id="smBottomPane">
 				<div id="smDetails">
@@ -19,7 +19,7 @@
 						</template>
 					</span>
 					<span id="smTimestamp">
-						<people-time timestamp="{{post.created_time}}" service="Facebook"></people-time>
+						<plus-time timestamp="{{post.created_time}}" service="Facebook"></plus-time>
 					</span>
 				</div>
 				<!-- <div id="smPostStats">
@@ -33,7 +33,7 @@
 					</template>
 				</div> -->
 				<template if="{{post.type === 'photo'}}">
-					<people-img id="smFbPic" src="{{'https://graph.facebook.com/' + post.object_id + '/picture?type=normal&access_token=' + accessToken}}"></people-img>
+					<plus-img id="smFbPic" src="{{'https://graph.facebook.com/' + post.object_id + '/picture?type=normal&access_token=' + accessToken}}"></plus-img>
 				</template>
 				<template if="{{post.type === 'video'}}">
 					<fb-video src="{{post.source}}"></fb-video>
