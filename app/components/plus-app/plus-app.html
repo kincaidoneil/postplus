@@ -1,9 +1,20 @@
 <!-- DEPENDENCIES -->
 <!-- Polymer -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<!-- Core and Paper Elements -->
-<link rel="import" href="../../bower_components/core-elements/core-elements.html">
-<link rel="import" href="../../bower_components/paper-elements/paper-elements.html">
+<!-- Core Elements -->
+<link rel="import" href="../../bower_components/core-pages/core-pages.html">
+<link rel="import" href="../../bower_components/core-animated-pages/core-animated-pages.html">
+<link rel="import" href="../../bower_components/core-toolbar/core-toolbar.html">
+<link rel="import" href="../../bower_components/core-icon/core-icon.html">
+<link rel="import" href="../../bower_components/core-iconset-svg/core-iconset-svg.html">
+<!-- Paper Elements -->
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-shadow/paper-shadow.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<!-- Icons -->
 <link rel="import" href="../../bower_components/core-icons/social-icons.html">
 <!-- Components -->
 <link rel="import" href="../fb-card/fb-card.html">
@@ -48,6 +59,7 @@
 		Polymer('plus-app', {
 			selected: 0,
 			ready: function() {
+				console.log('whaaaaa');
 				chrome.storage.sync.get('accounts', function(accounts) {
 					// If no accounts exist, navigate to the login page. Otherwise, navigate to dash.
 					if ($.isEmptyObject(accounts)) {
