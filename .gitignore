@@ -9,6 +9,7 @@ build/
 
 app/bower_components
 
+*.css
 *.log
 
 # =========================
