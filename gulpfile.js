@@ -114,9 +114,9 @@ gulp.task('chrome', function() {
 			.pipe(gulp.dest('build'));
 	});
 	
-	// When any build files are updated, re-vulcanize index.html.
+	// When any build files are updated, re-vulcanize index.html (or if app/index.html is updated--its simpler at this point in the chain).
 	// Copy index.html from app/ first so index.html in build/ won't be vulcanized twice.
-	gulp.watch('build/components/**/*.{html,css,js}').on('change', gulp.series(
+	gulp.watch(['build/components/**/*.{html,css,js}', 'app/index.html']).on('change', gulp.series(
 		'chrome:copy',
 		'build:vulcanize'
 	));
