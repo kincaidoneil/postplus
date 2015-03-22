@@ -115,7 +115,7 @@
 						context: this // Set scope of callback functions.
 					}).done(function(response) {
 						// FOR TESTING PURPOSES ONLY.
-						console.log(response);
+						// console.log(response);
 						// Run success callback. Set scope.
 						done.call(this, response);
 					}).fail(function(xhr, status, text) {
