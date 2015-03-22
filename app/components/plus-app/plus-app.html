@@ -10,6 +10,7 @@
 <!-- Paper Elements -->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/paper-shadow/paper-shadow.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
@@ -59,7 +60,6 @@
 		Polymer('plus-app', {
 			selected: 0,
 			ready: function() {
-				console.log('whaaaaa');
 				chrome.storage.sync.get('accounts', function(accounts) {
 					// If no accounts exist, navigate to the login page. Otherwise, navigate to dash.
 					if ($.isEmptyObject(accounts)) {
