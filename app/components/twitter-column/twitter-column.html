@@ -1,31 +1,112 @@
-!-- POLYMER -->
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<polymer-element name="twitter-column" attributes="accessToken">
+<polymer-element name="twitter-column" attributes="oauthToken oauthTokenSecret">
 	<template>
-		<!-- STYLES -->
-		<link rel="stylesheet" type="text/css" href="../plus-column/plus-column.css">
 		<!-- MARKUP -->
-		<div id="columnContainer">
-			<div id="columnTopContainer">
-				<div id="columnTop" style="background: #00ACED">
-					<core-icon icon="social:post-facebook" size="20"></core-icon>
-					<div id="columnLabel">Twitter</div>
-				</div>
-				<!-- <paper-shadow id="columnShadow" z="2"></paper-shadow> -->
-			</div>
-			<div id="column">
-				<template repeat="{{post in feed}}">
-					<fb-card post="{{post}}" accessToken="{{accessToken}}"></fb-card>
-				</template>
-			</div>
-		</div>
+		<core-list id="column" data="{{feed}}">
+			<twitter-card post="{{model}}" oauthToken="{{oauthToken}}" oauthTokenSecret="{{oauthTokenSecret}}"></twitter-card>
+		</core-list>
 	</template>
 	<!-- SCRIPTS -->
 	<script type="text/javascript">
 		Polymer('twitter-column', {
 			ready: function() {
-				// Hello, world.
-			}
+				this.request({}, function(response) {
+					if (response.length >= 1) {
+						this.newerPage = {since_id: response[0].id_str};
+						this.olderPage = {max_id: response[response.length - 1].id_str};
+						this.feed = response;
+					}
+				}, function() {
+					// ERROR HANDLING
+				}, function() {
+					setTimeout(function() {
+						this.newer();
+					}.bind(this), 90000);
+				});
+				$(document).ready(function() {
+					setTimeout(function() {
+						this.ui();
+					}.bind(this), 1000);
+					$(this.$.column).on('scroll', function() {
+						this.older();
+					}.bind(this));
+				}.bind(this));
+			},
+			ui: function() {
+				TweenLite.to(this.$.columnTopContainer, 0.5, {top: 0});
+				TweenLite.fromTo(this.$.column, 0.5, {
+					marginTop: 0,
+					height: $(this.$.column).height(),
+				}, {
+					marginTop: 40,
+					height: $(this.$.column).height() - 45
+				});
+			},
+			olderPage: {},
+			newerPage: {},
+			newer: function() {
+				this.request(this.newerPage, function(response) {
+					if (response.length >= 1) {
+						this.newerPage = {since_id: response[0].id_str};
+						this.feed = response.concat(this.feed);
+					}
+				}, function() {
+					// ERROR HANDLING.
+				}, function() {
+					// Attempt to update Instagram every 30 seconds.
+					setTimeout(function() {
+						this.newer();
+					}.bind(this), 90000);
+				});
+			},
+			older: function() {
+				var scrollHeight = $(this.$.column)[0].scrollHeight;
+				var scrollPos = $(this.$.column).scrollTop();
+				if (scrollHeight - scrollPos <= 1500) {
+					this.request(this.olderPage, function(response) {
+						if (response.length >= 1) {
+							this.olderPage = {max_id: response[response.length - 1].id_str};
+							this.feed = this.feed.concat(response);
+						}
+					}, function() {
+						// ERROR HANDLING.
+					});	
+				}
+			},
+			request: function(params, done, error, always) {
+				// Only run if no other requests are running.
+				if (this.loading === false) {
+					// Prevent other requests from running.
+					this.loading = true;
+					// Send AJAX request.
+					var url = 'https://api.twitter.com/1.1/statuses/home_timeline.json';
+					var dataParams = $.extend({count: 40}, params);
+					var authzParams = $.extend({oauth_token: this.oauthToken, count: 40}, params);
+					$.ajax({
+						// Set scope of callback functions.
+						context: this,
+						data: dataParams,
+						// Generate OAuth Authorization Header.
+						headers: {'Authorization': twitter.generateAuthzHeader(
+							url, 'GET', authzParams, false, this.oauthTokenSecret
+						)},
+						timeout: 10000,
+						type: 'GET',
+						url: url
+					}).done(function(response) {
+						// Run success callback. Set scope.
+						done.call(this, response);
+					}).fail(function(xhr, status, text) {
+						// Run error callback. Set scope.
+						error.call(this, xhr, status, text);
+					}).always(function() {
+						// Loading has finished, whether there was an error or not.
+						// Allow additional requests to run.
+						this.loading = false;
+						always.call(this);
+					});
+				}
+			},
+			loading: false
 		});
 	</script>
 </polymer-element>
