@@ -17,6 +17,7 @@
 		/* For status pictures. */
 		"https://*.akamaihd.net/",
 		"https://*.fbcdn.net/",
+		"https://*.twimg.com/",
 		/* For OAuth redirects. */
 		"https://*.chromiumapp.org/",
 		/* Miscellaneous */
@@ -25,9 +26,9 @@
 		"webview"
 	],
 	"icons": {
-		"16": "components/plus-app/images/postplus-logo-16-white.png",
-		"32": "components/plus-app/images/postplus-logo-32-white.png",
-		"48": "components/plus-app/images/postplus-logo-48-white.png",
-		"128": "components/plus-app/images/postplus-logo-128-white.png"
+		"16": "images/postplus-logo-16-white.png",
+		"32": "images/postplus-logo-32-white.png",
+		"48": "images/postplus-logo-48-white.png",
+		"128": "images/postplus-logo-128-white.png"
 	}
 }
