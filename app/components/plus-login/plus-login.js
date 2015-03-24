@@ -12,7 +12,7 @@ Polymer('plus-login', {
 				if ($.isEmptyObject(accounts)) {
 					this.accounts = [];
 				} else {
-					this.accounts = accounts;
+					this.accounts = accounts.accounts;
 				}
 				// Wait to load UI until accounts have been checked
 				this.ui();
@@ -203,6 +203,7 @@ Polymer('plus-login', {
 			var oauth_token = this.getURLHash(response).oauth_token;
 			var oauth_verifier = this.getURLHash(response).oauth_verifier;
 			$.ajax({
+				// Set scope of callback functions.
 				context: this,
 				data: {
 					oauth_verifier: oauth_verifier
@@ -225,6 +226,7 @@ Polymer('plus-login', {
 				var oauth_token = this.getURLHash(response).oauth_token;
 				var oauth_token_secret = this.getURLHash(response).oauth_token_secret;
 				$.ajax({
+					// Set scope of callback functions.
 					context: this,
 					// Generate OAuth Authorization Header.
 					headers: {'Authorization': twitter.generateAuthzHeader(
@@ -314,6 +316,13 @@ Polymer('plus-login', {
 		var accountIndex = $(target).attr('data-index');
 		// Remove the account.
 		this.accounts.splice(accountIndex, 1);
+	},
+	completeLogin: function() {
+		// Save account data to sync API.
+		chrome.storage.sync.set({accounts: this.accounts}, function() {
+			// If successful, navigate to dashboard.
+			navigatePage(1);
+		});
 	},
 	// Dialogs
 	showErrorToast: function() {

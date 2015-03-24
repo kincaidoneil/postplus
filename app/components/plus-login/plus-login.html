@@ -1,6 +1,6 @@
 <!-- POLYMER -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<polymer-element name="plus-login" attributes="defaultTab">
+<polymer-element name="plus-login" attributes="defaultTab accounts">
 	<template>
 		<!-- STYLES -->
 		<link rel="stylesheet" type="text/css" href="plus-login.css">
@@ -9,7 +9,7 @@
 		<paper-shadow id="accountsPane" z="3">
 			<core-animated-pages transitions="cross-fade" selected="{{authz.inProgress ? 1 : 0}}">
 				<!-- Page 1 / Accounts -->
-				<div id="accountsPg">
+				<div id="accountsPage">
 					<!-- Tab Container -->
 					<paper-shadow id="tabContainer" z="1" cross-fade>
 						<paper-tabs id="tabs" selected="{{defaultTab}}" nobar="true" noink="true">
@@ -57,11 +57,11 @@
 					</paper-shadow>
 					<!-- Finish Button -->
 					<template if="{{accounts.length >= 1}}">
-						<paper-button id="finishButton" raised cross-fade>Finish</paper-button>
+						<paper-button id="finishButton" raised cross-fade on-tap="{{completeLogin}}">Finish</paper-button>
 					</template>
 				</div>
 				<!-- Page 2 / Loading -->
-				<div id="loadingPg">
+				<div id="loadingPage">
 					<div id="loadingContainer" cross-fade><!-- Solves issues with cross-fade not working properly when applied directly. -->
 						<!-- Setup Progress -->
 						<paper-spinner id="setupProgress" active></paper-spinner>
