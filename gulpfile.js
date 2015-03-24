@@ -23,7 +23,7 @@ gulp.task('clean', function(callback) {
 // Compile Stylus into CSS; minify it.
 gulp.task('styles', function() {
 	// Set base to 'app/components' so each file goes into the same directory it started.
-	return gulp.src('app/components/**/*.styl', {base: 'app/components'})
+	return gulp.src(['app/components/**/*.styl', 'app/styles/*.styl'], {base: 'app/components'})
 		.pipe(stylus())
 		.pipe(csso())
 		.pipe(gulp.dest('app/components'));
@@ -101,7 +101,7 @@ gulp.task('chrome', function() {
 	lr.listen(35729);
 	
 	// Watch Stylus for changes to compile them.
-	gulp.watch('app/components/**/*.styl').on('change', function(event) {
+	gulp.watch(['app/components/**/*.styl', 'app/styles/*.styl']).on('change', function(event) {
 		// Set base to 'app/components' so each file goes into the same directory it started.
 		return gulp.src(event.path, {base: 'app/components'})
 			.pipe(stylus())
