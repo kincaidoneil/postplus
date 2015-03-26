@@ -19,16 +19,6 @@
 						<plus-time timestamp="{{post.created_time}}" service="Instagram"></plus-time>
 					</span>
 				</div>
-				<!-- <div id="smPostStats">
-					<template if="{{post.likes}}">
-						<img id="smIcon" src="../images/like-14.png" />
-						{{post.likes.data.length}}
-					</template>
-					<template if="{{post.comments}}">
-						<img id="smIcon" src="../images/comment-14.png" />
-						{{post.comments.data.length}}
-					</template>
-				</div> -->
 				<template if="{{post.type === 'image'}}">
 					<plus-img id="smInstaPic" src="{{post.images.standard_resolution.url}}"></plus-img>
 				</template>
