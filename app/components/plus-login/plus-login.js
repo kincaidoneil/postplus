@@ -3,11 +3,11 @@ Polymer('plus-login', {
 		inProgress: false,
 		service: '',
 		requestURL: '',
-		callbackURL: 'https://www.bing.com/'
+		callbackURL: 'https://postplusapp.com/'
 	},
 	accounts: [],
 	ready: function() {
-		$(window).ready(function() {
+		$(document).ready(function() {
 			chrome.storage.sync.get('accounts', function(accounts) {
 				if ($.isEmptyObject(accounts)) {
 					this.accounts = [];
@@ -167,7 +167,7 @@ Polymer('plus-login', {
 							// Notify the user via a toast the account was added.
 							this.$.successToast.show();
 							this.authz.inProgress = false;
-							this.authz.requestURL = 'https://www.google.com/';
+							this.authz.requestURL = '';
 						}).fail(function(error, xhr, status) {
 							this.showErrorToast();
 						});
@@ -246,7 +246,7 @@ Polymer('plus-login', {
 					// Notify the user via a toast the account was added.
 					this.$.successToast.show();
 					this.authz.inProgress = false;
-					this.authz.requestURL = 'https://www.google.com/';
+					this.authz.requestURL = '';
 				}).fail(function(error, xhr, status) {
 					this.showErrorToast();
 				});
@@ -288,7 +288,7 @@ Polymer('plus-login', {
 					// Notify the user via a toast the account was added.
 					this.$.successToast.show();
 					this.authz.inProgress = false;
-					this.authz.requestURL = 'https://www.google.com/';
+					this.authz.requestURL = '';
 				}).fail(function(error, xhr, status) {
 					this.showErrorToast();
 				});
@@ -312,12 +312,12 @@ Polymer('plus-login', {
 	// Dialogs
 	showErrorToast: function() {
 		this.authz.inProgress = false;
-		this.authz.requestURL = 'https://www.google.com/';
+		this.authz.requestURL = '';
 		this.$.errorToast.show();
 	},
 	showDuplicateToast: function() {
 		this.authz.inProgress = false;
-		this.authz.requestURL = 'https://www.google.com/';
+		this.authz.requestURL = '';
 		this.$.duplicateToast.show();
 	},
 });

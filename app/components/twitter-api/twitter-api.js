@@ -10,14 +10,12 @@ var twitter = {
 	 * @return {String}                    The OAuth Authorization header required for all Twitter API requests.
 	 */
 	generateAuthzHeader: function(url, method, params, requestToken, oauth_token_secret) {
-		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// COLLECT ALL PARAMETERS
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		
 		// oauth_callback [ONLY IN oauth/request_token]
 		if (requestToken === true) {
-			params.oauth_callback = "https://www.bing.com/";
+			params.oauth_callback = "https://postplusapp.com/";
 		}
 		// oauth_consumer_key
 		params.oauth_consumer_key = 'JndzzjUy4Nej49X0qGDWNQ';
@@ -33,11 +31,9 @@ var twitter = {
 		params.oauth_timestamp = Math.round(new Date().getTime() / 1000);
 		// oauth_version
 		params.oauth_version = '1.0';
-		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// GENERATE THE SIGNATURE
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		
 		// Create the parameter string, for use in the signature base string (the 'message' to be encrypted for the signature).
 		var paramStr = '';
 		// For each param (sorted alphabetically) . . .
@@ -59,11 +55,9 @@ var twitter = {
 		}
 		// Calculate the signature. Use HMAC-SHA1 encryption, and Base64 to encode the raw output.
 		params.oauth_signature = CryptoJS.HmacSHA1(baseStr, signingKey).toString(CryptoJS.enc.Base64);
-		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// CREATE AUTHORIZATION HEADER
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		
 		authzHeader = 'OAuth ';
 		// For each param (sorted alphabetically) . . .
 		Object.keys(params).sort().forEach(function(key) {
@@ -76,9 +70,7 @@ var twitter = {
 		});
 		// No comma is necesary after the last item, so remove the last two characters: ', '.
 		authzHeader = authzHeader.slice(0, -2);
-		
 		return authzHeader;
-		
 	},
 	/**
 	 * [percentEncode]
