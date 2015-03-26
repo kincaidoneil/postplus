@@ -14,28 +14,13 @@ Polymer('plus-login', {
 				} else {
 					this.accounts = accounts.accounts;
 				}
-				// Wait to load UI until accounts have been checked
-				this.ui();
+				// As they're building-in from off-screen, begin at full speed (easeOut).
+				TweenLite.to(this.$.introPane, 2, {opacity: 1, ease: Power3.easeOut});
+				TweenLite.to(this.$.accountsPane, 2, {left: 0, ease: Power3.easeOut});
+				// Stagger login button animations by 200ms so less is happening at once; make them more apparent (last parameter).
+				TweenMax.allTo([this.$.fbButton, this.$.twitterButton, this.$.instaButton], 1, {left: 0, opacity: 1, ease: Power3.easeOut}, 0.2);
 			}.bind(this));
 		}.bind(this));
-	},
-	ui: function() {
-		// As they're building-in from off-screen, begin at full speed (easeOutQuart).
-		$(this.$.introPane).velocity({opacity: 1}, {duration: 1000, fill: 'both', easing: 'easeOutQuart'});
-		$(this.$.accountsPane).velocity({left: 0}, {duration: 1000, fill: 'both', easing: 'easeOutQuart'});
-		$(this.$.fbButton).velocity(
-		// Delay animations so less is happening at once; make them more apparent.
-			{left: 0, opacity: 1},
-			{duration: 800, fill: 'both', easing: 'easeOutQuart'}
-		);
-		$(this.$.twitterButton).velocity(
-			{left: 0, opacity: 1},
-			{duration: 800, fill: 'both', delay: 100, easing: 'easeOutQuart'}
-		);
-		$(this.$.instaButton).velocity(
-			{left: 0, opacity: 1}, 
-			{duration: 800, fill: 'both', delay: 200, easing: 'easeOutQuart'}
-		);
 	},
 	getURLHash: function(str) {
 		var vars = str.split(/[\#\?\&]/gim);

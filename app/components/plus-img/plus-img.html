@@ -1,14 +1,7 @@
 <polymer-element name="plus-img" attributes="src">
+	<!-- MARKUP -->
 	<template>
-		<!-- STYLES -->
-		<style type="text/css">
-			/* Allow image to fade-in after its loaded. */
-			#image {
-				opacity: 0;
-			}
-		</style>
-		<!-- MARKUP -->
-		<img id="image" src="{{blob}}" />
+		<img id="image" src="{{blob}}" style="opacity: 0" />
 	</template>
 	<!-- SCRIPTS -->
 	<script type="text/javascript">
@@ -23,7 +16,7 @@
 					if (xhr.readyState === 4 && xhr.status === 200) {
 						// Convert response to blob; set image source to blob.
 						this.blob = window.URL.createObjectURL(xhr.response);
-						$(this.$.image).animate({opacity: 1}, 400);
+						TweenLite.to(this.$.image, 0.5, {opacity: 1});
 					}
 				}.bind(this);
 				xhr.send();
