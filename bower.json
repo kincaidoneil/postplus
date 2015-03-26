@@ -6,7 +6,6 @@
     "core-animated-pages": "Polymer/core-animated-pages#~0.5.4",
     "core-icon": "Polymer/core-icon#~0.5.4",
     "core-iconset-svg": "Polymer/core-iconset-svg#~0.5.4",
-    "core-list": "Polymer/core-list#~0.5.4",
     "core-pages": "Polymer/core-pages#~0.5.4",
     "core-toolbar": "Polymer/core-toolbar#~0.5.4",
     "CryptoJS": "sytelus/CryptoJS#~3.1.2",
