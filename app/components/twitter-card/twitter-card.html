@@ -102,6 +102,9 @@
 				if (i > last_i) {
 					result += tweet.text.substring(last_i, i);
 				}
+				// Replace newlines with line breaks.
+				result = result.replace(/(?:\r\n|\r|\n)/g, '<br />');
+				// Set Tweet content to parsed result.
 				$(this.$.smTweet).html(result);
 			},
 			escapeHTML: function(text) {
