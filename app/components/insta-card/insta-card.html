@@ -35,7 +35,7 @@
 					<plus-img id="smInstaPic" src="{{post.images.standard_resolution.url}}"></plus-img>
 				</template>
 				<template if="{{post.type === 'video'}}">
-					<video id="smInstaVideo" controls src="{{post.videos.standard_resolution.url}}"></video>
+					<video id="smInstaVideo" on-mouseover="{{play}}" on-mouseout="{{pause}}" src="{{post.videos.standard_resolution.url}}"></video>
 				</template>
 				<template if="{{post.caption !== null}}">
 					<div id="smInstaCaption">
@@ -48,10 +48,11 @@
 	<!-- SCRIPTS -->
 	<script type="text/javascript">
 		Polymer('insta-card', {
-			ready: function() {
-				
-				// Write some code here.
-				
+			play: function() {
+				this.$.smInstaVideo.play();
+			},
+			pause: function() {
+				this.$.smInstaVideo.pause();
 			}
 		});
 	</script>
