@@ -18,13 +18,13 @@
 							<!-- Login tab -->
 							<div id="loginContainer">
 								<paper-shadow id="fbButton" class="loginButton" z="1" on-tap="{{launchWebAuth}}" data-service="Facebook" style="background: #3B5998">
-									<img class="icon" src="images/fb-48.png" />Add Facebook
+									<core-icon class="icon" icon="postplus:facebook-fill"></core-icon>Add Facebook
 								</paper-shadow>
 								<paper-shadow id="twitterButton" class="loginButton" z="1" on-tap="{{launchWebAuth}}" data-service="Twitter" style="background: #00ACED">
-									<img class="icon" src="images/twitter-48.png">Add Twitter
+									<core-icon class="icon" icon="postplus:twitter"></core-icon>Add Twitter
 								</paper-shadow>
 								<paper-shadow id="instaButton" class="loginButton" z="1" on-tap="{{launchWebAuth}}" data-service="Instagram" style="background: #3F729B">
-									<img class="icon" src="images/insta-48.png" />Add Instagram
+									<core-icon class="icon" icon="postplus:instagram"></core-icon>Add Instagram
 								</paper-shadow>
 							</div>
 							<!-- Accounts tab -->
@@ -32,13 +32,13 @@
 								<template repeat="{{account, index in accounts}}">
 									<paper-shadow class="accountTile" z="1">
 										<template if="{{account.service === 'Facebook'}}">
-											<core-icon size="40" icon="social:post-facebook" style="color: #3B5998"></core-icon>
+											<core-icon size="40" icon="postplus:facebook-fill" style="color: #3B5998"></core-icon>
 										</template>
 										<template if="{{account.service === 'Twitter'}}">
-											<core-icon size="40" icon="social:post-twitter" style="color: #00ACED"></core-icon>
+											<core-icon size="40" icon="postplus:twitter-fill" style="color: #00ACED"></core-icon>
 										</template>
 										<template if="{{account.service === 'Instagram'}}">
-											<core-icon size="40" icon="social:post-instagram" style="color: #3F729B"></core-icon>
+											<core-icon size="40" icon="postplus:instagram" style="color: #3F729B"></core-icon>
 										</template>
 										<div id="fullNameContainer">{{account.fullName}}</div>
 										<template if="{{account.username && (account.service === 'Twitter' || account.service === 'Instagram')}}">
@@ -78,9 +78,9 @@
 			<core-animated-pages transitions="cross-fade" selected="{{authz.inProgress ? 1 : 0}}">
 				<!-- Page 1 / Intro Container -->
 				<div id="introContainer">
-					<h1 cross-fade><img src="../plus-app/images/postplus-logo-128-white.png" />POST+</h1>
+					<h1 cross-fade><core-icon id="logo" icon="postplus:logo"></core-icon>POST+</h1>
 					<h3 cross-fade>Welcome to Post+! Login to your accounts to get started (don't worry, you can always add more or remove them later in Settings).</h3>
-					<video controls cross-fade></video>
+					<div id="video" cross-fade></div>
 				</div>
 				<!-- Page 2 / Authentication Container -->
 				<div id="webAuthContainer">
