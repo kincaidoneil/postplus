@@ -1,26 +1,26 @@
-<polymer-element name="twitter-card" attributes="post oauthToken oauthTokenSecret">
+<polymer-element name="twitter-card" attributes="tweet oauthToken oauthTokenSecret">
 	<template>
 		<!-- STYLES -->
 		<link rel="stylesheet" type="text/css" href="../plus-card/plus-card.css">
 		<!-- MARKUP -->
 		<div id="card">
 			<div id="smTopPane">
-				<plus-img id="smStatusPic" src="{{post.user.profile_image_url_https}}"></plus-img>
+				<plus-img id="smStatusPic" src="{{tweet.user.profile_image_url_https}}"></plus-img>
 			</div>
 			<div id="smBottomPane">
 				<div id="smDetails">
 					<span id="smName">
-						{{post.user.name}}
+						{{tweet.user.name}}
 					</span>
 					<span id="smUsername">
-						@{{post.user.screen_name}}
+						@{{tweet.user.screen_name}}
 					</span>
 					<span id="smTimestamp">
-						<plus-time timestamp="{{post.created_at}}" service="Twitter"></plus-time>
+						<plus-time timestamp="{{tweet.created_at}}" service="Twitter"></plus-time>
 					</span>
 				</div>
-				<template if="{{post.entities.media}}">
-					<plus-img id="smTweetMedia" src="{{post.entities.media[0].media_url_https}}"></post-img>
+				<template if="{{tweet.entities.media}}">
+					<plus-img id="smTweetMedia" src="{{tweet.entities.media[0].media_url_https}}"></plus-img>
 				</template>
 				<div id="smTweet"></div>
 			 </div>
@@ -31,7 +31,7 @@
 		Polymer('twitter-card', {
 			ready: function() {
 				// Parse entities in tweet and add to text.
-				this.parseEntities(this.post);
+				this.parseEntities(this.tweet);
 			},
 			parseEntities: function(tweet) {
 				if (!tweet.entities) {
@@ -82,7 +82,7 @@
 							'<\/a>';
 					}.bind(this)];
 				}.bind(this));
-				// Iterate through the string looking for matches in the index_map.
+				// Iterate through the string looking for matches in the index_map, append to resulting HTML string.
 				var result = '';
 				var last_i = 0;
 				var i = 0;
@@ -100,7 +100,7 @@
 					}
 				}
 				if (i > last_i) {
-					result += this.escapeHTML(tweet.text.substring(last_i, i));
+					result += tweet.text.substring(last_i, i);
 				}
 				$(this.$.smTweet).html(result);
 			},
