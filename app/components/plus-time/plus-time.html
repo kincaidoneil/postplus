@@ -10,10 +10,8 @@
 				this.update();
 			},
 			update: function() {
-				// Parse dates given for both Facebook and Instagram posts.
-				if (this.service === 'Facebook') {
-					var timestamp = new Date(Date.parse(this.timestamp));
-				} else if (this.service === 'Twitter') {
+				// Parse dates given for tweets.
+				if (this.service === 'Twitter') {
 					var timestamp = new Date(Date.parse(this.timestamp));
 				} else if (this.service === 'Instagram') {
 					var timestamp = new Date(this.timestamp * 1000);

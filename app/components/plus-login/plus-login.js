@@ -37,17 +37,6 @@ Polymer('plus-login', {
 		if (this.authz.inProgress === false) {
 			this.authz.inProgress = true;
 			switch (target.dataset.service) {
-				// Facebook
-				case 'Facebook':
-					// Redirect user to authorization screen.
-					this.authz.requestURL = 'https://www.facebook.com/dialog/oauth' +
-						'?client_id=' + '461111707272988' +
-						'&redirect_uri=' + encodeURIComponent(this.authz.callbackURL) +
-						'&response_type=token' +
-						'&display=popup' +
-						'&scope=read_stream';
-					this.authz.service = 'Facebook';
-					break;
 				// Twitter
 				case 'Twitter':
 					// Make XHR request: get request token.
@@ -93,9 +82,6 @@ Polymer('plus-login', {
 		if (isTopLevel == true && url.indexOf(this.authz.callbackURL) > -1) {
 			// Success! The user successfully authenticated their account. Get details and add the account.
 			switch (this.authz.service) {
-				case 'Facebook':
-					this.addAccount.facebook.call(this, url);
-					break;
 				case 'Twitter':
 					this.addAccount.twitter.call(this, url);
 					break;
@@ -116,71 +102,6 @@ Polymer('plus-login', {
 	},
 	// Add/remove an account.
 	addAccount: {
-		facebook: function(response) {
-			// Get access token from variable in the returned URL.
-			var shortAccessToken = this.getURLHash(response).access_token;
-			// If it acutally returned an access token and didn't error...
-			if (typeof shortAccessToken != 'undefined' && shortAccessToken != null) {
-				// Make XHR request: fetch long-term (60 day) access token using short-term (2 hour) access token.
-				var url = 'https://graph.facebook.com/oauth/access_token' +
-					'?client_id=' + '461111707272988' +
-					'&redirect_uri=' + encodeURIComponent(this.authz.callbackURL) +
-					'&client_secret=' + '0b6e647015c72dc9786325e3b82761f1' +
-					'&grant_type=' + 'fb_exchange_token' +
-					'&fb_exchange_token=' + encodeURIComponent(shortAccessToken);
-				$.ajax({
-					context: this,
-					timeout: 10000,
-					url: url
-				}).done(function(response) {
-					// Get extended access token.
-					var longAccessToken = this.getURLHash(response).access_token;
-					// If it acutally returned an access token and didn't error...
-					if (typeof longAccessToken != 'undefined' && longAccessToken != null) {
-						// Make XHR request: fetch basic user information.
-						var url = 'https://graph.facebook.com/me' +
-							'?access_token=' + longAccessToken;
-						$.ajax({
-							context: this,
-							dataType: 'json',
-							timeout: 10000,
-							url: url
-						}).done(function(data) {
-							// Check to see if the account already exists.
-							for (var i = 0; i < this.accounts.length; i++) {
-								// If the account was already added, stop execution and show error dialog.
-								if (this.accounts[i].accountId === data.id) {
-									this.showDuplicateToast();
-									return;
-								}
-							};
-							// Add Facebook account data!
-							this.accounts.push({
-								accountId: data.id,
-								accessToken: longAccessToken,
-								service: 'Facebook',
-								fullName: data.name,
-								username: data.username,
-								profilePicture: 'http://graph.facebook.com/' + data.username + '/picture',
-								profilePictureLarge: 'http://graph.facebook.com/' + data.username + '/picture?type=large'
-							});
-							// Notify the user via a toast the account was added.
-							this.$.successToast.show();
-							this.authz.inProgress = false;
-							this.authz.requestURL = '';
-						}).fail(function(error, xhr, status) {
-							this.showErrorToast();
-						});
-					} else {
-						this.showErrorToast();
-					}
-				}).fail(function(error, xhr, status) {
-					this.showErrorToast();
-				});
-			} else {
-				this.showErrorToast();
-			}
-		},
 		twitter: function(response) {
 			// Make XHR request: convert request token into an access token.
 			var url = 'https://api.twitter.com/oauth/access_token';

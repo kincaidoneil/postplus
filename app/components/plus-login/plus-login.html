@@ -17,9 +17,6 @@
 						<core-pages selected="{{$.tabs.selected}}">
 							<!-- Login tab -->
 							<div id="loginContainer">
-								<paper-shadow id="fbButton" class="loginButton" z="1" on-tap="{{launchWebAuth}}" data-service="Facebook" style="background: #3B5998">
-									<core-icon class="icon" icon="postplus:facebook-fill"></core-icon>Add Facebook
-								</paper-shadow>
 								<paper-shadow id="twitterButton" class="loginButton" z="1" on-tap="{{launchWebAuth}}" data-service="Twitter" style="background: #00ACED">
 									<core-icon class="icon" icon="postplus:twitter"></core-icon>Add Twitter
 								</paper-shadow>
@@ -31,9 +28,6 @@
 							<div id="accountsContainer">
 								<template repeat="{{account, index in accounts}}">
 									<paper-shadow class="accountTile" z="1">
-										<template if="{{account.service === 'Facebook'}}">
-											<core-icon size="40" icon="postplus:facebook-fill" style="color: #3B5998"></core-icon>
-										</template>
 										<template if="{{account.service === 'Twitter'}}">
 											<core-icon size="40" icon="postplus:twitter-fill" style="color: #00ACED"></core-icon>
 										</template>

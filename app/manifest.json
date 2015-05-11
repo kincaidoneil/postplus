@@ -11,7 +11,6 @@
 	},
 	"permissions": [
 		/* For API calls. */
-		"https://*.facebook.com/",
 		"https://*.twitter.com/",
 		"https://*.instagram.com/",
 		/* For status pictures. */
