@@ -2,12 +2,8 @@
 # Project Files
 # =========================
 
-node_modules/
-
 dist/
-build/
-
-app/bower_components
+node_modules/
 
 *.css
 *.log
