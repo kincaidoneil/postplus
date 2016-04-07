@@ -1,51 +1,36 @@
-// BODY
-
 body, html
 	width: 100%
 	height: 100%
 	margin: 0
 	padding: 0
+	overflow-x: hidden
+	overflow-y: hidden
+	font-family: 'WeblySleek UI'
+	font-size: 12pt
 
-#navigation
-	width: 100%
-	height: 100%
+// Blue base
+$blue_base = dodgerblue
+// Darker navy tone
+$navy_base = #2c3e50
+// Ultra light gray
+$gray_base = #eeeeee
+// Hot pink accent
+$accent = #ec407a
+// Twitter accent
+$twitter_blue = #00ACED
+// Nice gray tone used by Twitter
+$twitter_gray = #292f33
 
-// COLORS
+// Miscellaneous Twitter colors...
+$twitterGray2 = #66757f
+$twitterGray3 = #ccd6dd
+$twitterGray4 = #e1e8ed
 
-navyBase = #2c3e50 // Darker navy tone
-grayBase = #eeeeee // Ultra-light gray
-pinkAccent = #ec407a // Hot pink accent
+// Link styles
 
-fbAccent = #3B5998
-twitterAccent = #00ACED
-instaAccent=  #3F729B
-
-.fb
-	background: fbAccent
-	color: fbAccent
+a
+	color: $blue_base
+	text-decoration: none
 	
-.twitter
-	background: twitterAccent
-	color: twitterAccent
-	
-.insta
-	background: instaAccent
-	color: instaAccent
-
-// BUTTON
-
-.button
-	cursor: pointer
-
-// TEXT
-
-body
-	font-family: "Roboto"
-	font-size: 14px
-	color: dimgray
-
-.username
-	font-family: "Roboto Condensed"
-	font-size: 14px
-	color: darkgray
-
+a:hover
+	text-decoration: underline
