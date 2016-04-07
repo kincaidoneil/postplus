@@ -1,25 +1,12 @@
 {
-  "name": "postplus",
-  "version": "0.2.0",
-  "description": "A beautiful social media aggregate.",
-  "main": "index.html",
-  "keywords": [
-    "facebook",
-    "twitter",
-    "instagram"
-  ],
-  "author": "Kincaid O'Neil",
-  "devDependencies": {
-    "browser-sync": "1.3.2",
-    "del": "1.1.1",
-    "gulp": "git://github.com/gulpjs/gulp.git#4.0",
-    "gulp-csso": "1.0.0",
-    "gulp-minify-html": "1.0.0",
-    "gulp-stylus": "2.0.1",
-    "gulp-vulcanize": "5.0.0",
-    "tiny-lr": "0.1.5"
-  },
-  "engines": {
-    "node": ">=0.8.0"
-  }
-}
+	"dependencies": {
+		"animate.css": "3.5.1",
+		"crypto-js": "3.1.6",
+		"lodash": "4.6.1",
+		"twit": "2.2.3",
+		"vue": "1.0.13",
+		"vue-infinite-scroll": "0.2.2",
+		"vue-keep-scroll": "0.1.1",
+		"vue-resource": "0.5.1",
+		"vue-spinner": "1.0.2"
+	},
