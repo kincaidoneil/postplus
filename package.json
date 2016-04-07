@@ -32,6 +32,10 @@
 		"vue-resource": "0.5.1",
 		"vue-spinner": "1.0.2"
 	},
+	"scripts": {
+		"dev": "webpack --progress --colors && webpack-dev-server --hot --inline",
+		"build": "cross-env NODE_ENV=production webpack --progress --colors"
+	},
 	"engines": {
 		"node": ">=0.10.0"
 	}
