@@ -1,79 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<title>Post+</title>
-		<!-- DEPENDENCIES -->
-		<!-- Polymer -->
-		<script src="bower_components/webcomponentsjs/webcomponents.js"></script>
-		<link rel="import" href="bower_components/polymer/polymer.html">
-		<!-- Core Elements -->
-		<link rel="import" href="bower_components/core-animated-pages/core-animated-pages.html">
-		<link rel="import" href="bower_components/core-icon/core-icon.html">
-		<link rel="import" href="bower_components/core-iconset-svg/core-iconset-svg.html">
-		<link rel="import" href="bower_components/core-list/core-list.html">
-		<link rel="import" href="bower_components/core-pages/core-pages.html">
-		<link rel="import" href="bower_components/core-icons/social-icons.html">
-		<link rel="import" href="bower_components/core-toolbar/core-toolbar.html">
-		<!-- Paper Elements -->
-		<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
-		<link rel="import" href="bower_components/paper-button/paper-button.html">
-		<link rel="import" href="bower_components/paper-fab/paper-fab.html">
-		<link rel="import" href="bower_components/paper-spinner/paper-spinner.html">
-		<link rel="import" href="bower_components/paper-shadow/paper-shadow.html">
-		<link rel="import" href="bower_components/paper-toast/paper-toast.html">
-		<link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
-		<!-- Components -->
-		<link rel="import" href="components/fb-card/fb-card.html">
-		<link rel="import" href="components/fb-column/fb-column.html">
-		<link rel="import" href="components/fb-video/fb-video.html">
-		<link rel="import" href="components/insta-card/insta-card.html">
-		<link rel="import" href="components/insta-column/insta-column.html">
-		<link rel="import" href="components/plus-dash/plus-dash.html">
-		<link rel="import" href="components/plus-icons/plus-icons.html">
-		<link rel="import" href="components/plus-img/plus-img.html">
-		<link rel="import" href="components/plus-login/plus-login.html">
-		<link rel="import" href="components/plus-time/plus-time.html">
-		<link rel="import" href="components/twitter-api/twitter-api.html">
-		<link rel="import" href="components/twitter-card/twitter-card.html">
-		<link rel="import" href="components/twitter-column/twitter-column.html">
-		<!-- STYLES -->
-		<link rel="stylesheet" href="styles/global.css">
-		<!-- SCRIPTS -->
-		<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
-		<script type="text/javascript" src="bower_components/GSAP/src/minified/TweenMax.min.js"></script>
-		<script type="text/javascript" src="bower_components/chrome-app-livereload/livereload.js?host=localhost&amp;port=35729"></script>
-		<script type="text/javascript">
-			$(document).ready(function() {
-				// Use defaults: navigate to dash if accounts exist, and login if they don't.
-				navigatePage();
-			});
-			function navigatePage(page) {
-				// Prior to navigation, check for accounts.
-				chrome.storage.sync.get('accounts', function(accounts) {
-					if (typeof page === 'undefined') {
-						// If no page was passed through AND no accounts exist, navigate to the login page.
-						$('#navigation')[0].selected = $.isEmptyObject(accounts) ? 0 : 1;
-					} else {
-						// Otherwise, navigate to the page specified.
-						$('#navigation')[0].selected = page;
-					}
-					// Regardless of navigation, update account data for both pages.
-					// For instance, if the navigation is triggered from the login page, accounts have probably been updated (superior to constantly dirty checking).
-					// $('#loginPage')[0].accounts = accounts.accounts;
-					$('#dashPage')[0].accounts = accounts.accounts;
-				});
-			}
-		</script>
-		<script type="text/javascript" src="bower_components/CryptoJS/rollups/hmac-sha1.js"></script>
-		<script type="text/javascript" src="bower_components/CryptoJS/components/enc-base64-min.js"></script>
-		<script type="text/javascript" src="components/twitter-api/twitter-api.js"></script>
 	</head>
-	<!-- MARKUP -->
-	<body unresolved>
-		<core-pages id="navigation">
-			<plus-login id="loginPage" defaultTab="0"></plus-login>
-			<plus-dash id="dashPage"></plus-dash>
-		</core-pages>
+	<body>
+		<dash></dash>
 	</body>
 </html>
