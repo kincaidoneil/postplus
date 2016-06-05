@@ -1,6 +1,7 @@
 {
 	"name": "postplus",
 	"main": "app.js",
+	"main": "dist/electron.js",
 	"devDependencies": {
 		"babel-core": "6.7.2",
 		"babel-loader": "6.2.4",
