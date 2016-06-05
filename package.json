@@ -39,7 +39,8 @@
 		"vue-spinner": "^1.0.2"
 	},
 	"scripts": {
-		"dev": "webpack --progress --colors && webpack-dev-server --hot --inline",
-		"build": "cross-env NODE_ENV=production webpack --progress --colors"
+		"dev": "trash dist && webpack --colors --progress && webpack-dev-server --colors --hot --inline",
+		"build": "trash dist && cross-env NODE_ENV=production webpack --progress --colors",
+		"electron": "electron ."
 	}
 }
