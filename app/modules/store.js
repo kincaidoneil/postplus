@@ -1,29 +1,43 @@
+// import configStore from 'configstore'
+// const config = new configStore('postplus')
+//
+// import _merge from 'lodash/merge'
+//
+// // Add all saved user data, if it exists
+// _merge(options, config.get('data'))
+
 export default {
 	accounts: {
-		'254345401': {
+		// This is an example account schema!
+		// TODO: Add Twitter account ID for the key below
+		'': {
 			config: {
-	            consumer_key: "JndzzjUy4Nej49X0qGDWNQ",
-	            consumer_secret: "CCztEsN37EEHmy7xNlsHNiRou9IJxZBlYsuz4T7HLiE",
-	            access_token: "254345401-GBUbI5f4jkOIgUAZGZhY5RBsvlHbA9ZxQbLhVfS8",
-	            access_token_secret: "LM7oc5wT77O8JRWDnMi7vyul8UodnJFNvLxCPxnTSZU",
-	            timeout_ms: 30000
-	        },
-			home_timeline: {
-				tweets: [],
-				newest_id: '',
-				oldest_id: ''
+				consumer_key: "",
+				consumer_secret: "",
+				access_token: "",
+				access_token_secret: "",
+				timeout_ms: 30000
 			},
-			user_timeline: {
+			homeTimeline: {
 				tweets: [],
 				newest_id: '',
-				oldest_id: ''
+				oldest_id: '',
+				rateLimit: 15
 			},
-			mentions_timeline: {
+			userTimeline: {
 				tweets: [],
 				newest_id: '',
-				oldest_id: ''
+				oldest_id: '',
+				rateLimit: 180
+			},
+			mentionsTimeline: {
+				tweets: [],
+				newest_id: '',
+				oldest_id: '',
+				rateLimit: 15
 			},
 			lists: {
+				rateLimit: 180,
 				'list_id': {
 					// Other miscellaneous metadata here
 					tweets: [],
@@ -37,7 +51,7 @@ export default {
 					oldest_id: ''
 				}
 			},
-			direct_messages: {
+			directMessages: {
 				'user_id': {
 					// Other miscellaneous metadata here
 					messages: [],
@@ -62,31 +76,39 @@ export default {
 		}
 	},
 	columns: [{
-		name: 'Timeline',
-		account_id: '254345401',
-		endpoint: 'statuses/home_timeline',
-		oldest_id: 0,
-		newest_id: 0
+		type: 'timeline',
+		account_id: '',
+		endpoint: 'statuses/home_timeline'
 	}, {
-		name: 'Profile',
-		account_id: '254345401',
-		endpoint: 'statuses/user_timeline',
-		oldest_id: 0,
-		newest_id: 0
+		type: 'profile',
+		account_id: '',
+		endpoint: 'statuses/user_timeline'
+	}, {
+		type: 'messages',
+		account_id: ''
+	}, {
+		type: 'list',
+		account_id: ''
+	}, {
+		type: 'notifications',
+		account_id: ''
+	}, {
+		type: 'trending',
+		account_id: ''
 	}],
 	// Globals
-	consumer_key: 'JndzzjUy4Nej49X0qGDWNQ',
-	consumer_secret: 'CCztEsN37EEHmy7xNlsHNiRou9IJxZBlYsuz4T7HLiE',
-	callback_url: 'postplusapp.com',
+	consumerKey: '',
+	consumerSecret: '',
+	callbackURL: '',
 	// Settings
 	settings: {
 		// Constant for whether to use a 12/24 hour clock
-		twelve_hour: true,
+		twelveHour: true,
 		// Streaming
 		stream: true,
 		// Milliseconds between each request
-		sync_interval: 1000 * 60,
+		syncInterval: 1000 * 60,
 		// Use browser or built-in preview
-		open_in_browser: false
+		openInBrowser: false
 	}
 }
