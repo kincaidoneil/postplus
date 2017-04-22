@@ -3,9 +3,7 @@
 </template>
 <script type="text/javascript">
 	
-	// Import ES6 modules
-	// import store from 'store'
-	let store = require('store')
+	import store from 'store'
 	
 	module.exports = {
 		props: ['timestamp'],
