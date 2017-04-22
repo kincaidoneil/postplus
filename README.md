@@ -22,6 +22,6 @@ yarn run electron
 yarn run build
 ```
 
-Copyright &copy; 2017 [Kincaid O'Neil](https://github.com/kincaidoneil). Released under the [MIT license](https://github.com/kincaidoneil/postplus/blob/master/LICENSE.md).
+Copyright &copy; 2017 [Kincaid O'Neil](https://github.com/kincaidoneil). Released under the [MIT license](LICENSE.md).
 
 > [kincaidoneil.com](https://kincaidoneil.com) &bull; Twitter [@kincaidoneil](https://twitter.com/kincaidoneil)
