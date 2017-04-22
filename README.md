@@ -1,6 +1,6 @@
 # Post+
 
-Post+ is a native desktop Twitter app built using [Electron](https://electron.atom.io/) and [Vue.js](vuejs.org), inspired by TweetDeck.
+Post+ is a native desktop Twitter app built using [Electron](https://electron.atom.io/) and [Vue.js](https://vuejs.org), inspired by TweetDeck.
 
 ![Post+ Screenshot](screenshot.png)
 
