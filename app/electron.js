@@ -15,11 +15,13 @@ app.on('ready', () => {
 		height: 720,
 		show: false,
 		autoHideMenuBar: true,
+		webPreferences: {
+			experimentalFeatures: true, // Enables Grid Layout, CSS3 Backdrop Filters, etc.
+		},
 		maximize: true // Only for reference; not actually recognized by Electron
 	}
-	// Overwrite defaults by merging saved objects
-	let saved = config.get('window')
-	_merge(options, saved)
+	// Overwrite defaults by merging saved prefs
+	_merge(options, config.get('window'))
 	// Actually create the browser window!
 	let mainWindow = new electron.BrowserWindow(options)
 	// Maximize the window before it's shown
@@ -42,8 +44,12 @@ app.on('ready', () => {
 	// isMaximized() isn't true if the window was maximized and then minimized
 	mainWindow.on('maximize', () => options.maximize = true)
 	mainWindow.on('unmaximize', () => options.maximize = false)
-	// Before the window is closed, save preferences
-	mainWindow.on('close', () => config.set('window', options))
+	mainWindow.on('close', () => {
+		// Before the window is closed, save preferences
+		config.set('window', options)
+		// Close DevTools to prevent an Electron lifecycle error
+		mainWindow.webContents.closeDevTools()
+	})
 	// Window object MUST be deleted within 'closed' handler to prevent lifecycle error
 	mainWindow.on('closed', () => mainWindow = null)
 })
