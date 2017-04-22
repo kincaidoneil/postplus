@@ -15,6 +15,7 @@
 		"electron-prebuilt": "^1.0.2",
 		"file-loader": "^0.8.5",
 		"html-webpack-plugin": "^2.19.0",
+		"json-loader": "^0.5.4",
 		"style-loader": "^0.13.1",
 		"stylus": "^0.54.5",
 		"stylus-loader": "^2.1.0",
@@ -33,13 +34,14 @@
 		"lodash": "^4.13.1",
 		"twit": "^2.2.4",
 		"vue": "^1.0.24",
+		"vue-animated-list": "^1.0.2",
 		"vue-infinite-scroll": "^0.2.3",
 		"vue-keep-scroll": "^0.1.1",
 		"vue-resource": "^0.7.2",
 		"vue-spinner": "^1.0.2"
 	},
 	"scripts": {
-		"dev": "trash dist && webpack --colors --progress && webpack-dev-server --colors --hot --inline",
+		"dev": "trash dist && webpack --colors --progress && webpack-dev-server --hot --inline --colors",
 		"build": "trash dist && cross-env NODE_ENV=production webpack --progress --colors",
 		"electron": "electron ."
 	}
