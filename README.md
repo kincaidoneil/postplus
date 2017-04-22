@@ -8,7 +8,7 @@ Post+ is a native desktop Twitter app built using [Electron](https://electron.at
 
 ### Setup
 
-To enable integration with the Twitter API, replace `consumerSecret`, `consumerKey` and `callbackURL` within `app/modules/Store.js`.
+To enable integration with the Twitter API, replace `consumerSecret`, `consumerKey` and `callbackURL` within `app/modules/store.js`.
 
 ```bash
 # Start dev server with hot reloading
