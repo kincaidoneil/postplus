@@ -1,14 +1,14 @@
-const path = require('path')
 const webpack = require('webpack')
 const htmlPlugin = require('html-webpack-plugin')
 
 let options = {
 	entry: {
-		electron: path.join(__dirname, 'app/electron.js'),
-		index: path.join(__dirname, 'app/index.js')
+		electron: ['./app/electron.js'],
+		index: ['./app/index.js']
 	},
 	output: {
-		path: path.join(__dirname, 'dist/'),
+		path: './dist',
+		publicPath: 'http://localhost:8080/dist',
 		filename: '[name].js'
 	},
 	module: {
@@ -34,26 +34,26 @@ let options = {
 		}, {
 			test: /\.css$/,
 			loader: 'style-loader!css-loader'
+		}, {
+			test: /\.json$/,
+			loader: 'json-loader'
 		}]
 	},
-	// Bundle all Node.js modules (I think this works...?)
+	// Bundle all Node.js modules
 	target: 'electron-renderer',
 	resolve: {
-		modulesDirectories: ['node_modules', 'app/modules']
+		modulesDirectories: ['node_modules', 'app/modules', 'app/styles']
 	},
 	babel: {
-		"presets": ["es2015"],
-		"plugins": ["transform-runtime"]
+		'presets': ['es2015'],
+		'plugins': ['transform-runtime']
 	},
 	plugins: [
 		// Generate an HTML file using the template and inject scripts
 		new htmlPlugin({
 			filename: 'index.html',
 			template: 'app/index.html',
-			inject: true,
-			// Only include the render process (index.js) in the HTML file
-			// Exclude the Electron main process
-			chunks: ['index']
+			inject: false
 		}),
 		// Webpack fucks up __dirname in electron.js, so save it to dirname instead
 		// Basically, __dirname would get set to '/' instead of the full path from 'C:/'
@@ -67,11 +67,8 @@ let options = {
 if (process.env.NODE_ENV === 'production') {
 	// Minify the output
 	options.plugins.push(new webpack.optimize.UglifyJsPlugin())
-	// Omit localhost during production (used for hot reloading)
-	options.output.publicPath = './'
 } else {
 	options.devtool = '#inline-source-map'
-	options.publicPath = 'http://localhost:8080/dist'
 }
 
 module.exports = options
