@@ -1,18 +1,12 @@
-// Import ES6 modules
 import Vue from 'vue'
-import dash from 'dash.vue'
+import Dash from 'Dash.vue'
 
 // Import styles
-require('./styles/fonts.styl')
-require('./styles/global.styl')
-
-// Import Animate.css
-require('animate.css/animate.css')
+require('fonts.styl')
+require('global.styl')
 
 // Create root instance, necessary for using custom components
-let vm = new Vue({
+new Vue({
 	el: 'body',
-	components: {
-		dash
-	}
+	components: { Dash }
 })
