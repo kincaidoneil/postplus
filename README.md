@@ -12,14 +12,14 @@ To enable integration with the Twitter API, replace `consumerSecret`, `consumerK
 
 ```bash
 # Start dev server with hot reloading
-yarn run dev
+yarn dev
 
 # Launch the app
-yarn run electron
+yarn electron
 
 # Build & minify for production
 # Note: this does not generate binaries
-yarn run build
+yarn build
 ```
 
 Copyright &copy; 2017 [Kincaid O'Neil](https://github.com/kincaidoneil). Released under the [MIT license](LICENSE.md).
